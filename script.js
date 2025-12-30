@@ -124,7 +124,7 @@ function makeChampIcons(count) {
  * - counts by Sleeper username (recommended)
  * - edit counts here any time
  ***********************/
-const CHAMP_ICON_PATH = "./champion.png"; // if you put it in /icons, change to "./icons/champion.png"
+const CHAMP_ICON_PATH = "./icons/champion.png";
 
 const CHAMP_COUNTS_BY_USERNAME = {
   "skjjcruz": 2,
