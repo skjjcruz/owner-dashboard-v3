@@ -15,7 +15,13 @@ const DEFAULT_USERNAME = "";
 
 const POS_ORDER = ["QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB", "OTHER"];
 const PICK_YEARS = [2026, 2027, 2028];
-
+// ===== League Champions (manual for now) =====
+// number = total championships won in this league
+const CHAMPIONS = {
+  "skjjcruz": 2,
+  "Guerrero": 1,
+  "TWhy123": 1
+};
 // ===== DOM =====
 const elStatus = document.getElementById("status");
 const elTeams = document.getElementById("teams");
@@ -83,7 +89,36 @@ async function fetchJSON(url) {
 function safeName(u) {
   return u?.display_name || u?.username || "Unknown";
 }
+/* ===== Champion icon helpers ===== */
+function champCountForUser(userObj) {
+  // match by username first; fallback to display_name
+  const uname = userObj?.username || "";
+  const dname = userObj?.display_name || "";
+  return CHAMPIONS[uname] ?? CHAMPIONS[dname] ?? 0;
+}
 
+function makeChampIcons(count) {
+  const wrap = document.createElement("span");
+  wrap.className = "champWrap";
+  wrap.style.display = "inline-flex";
+  wrap.style.alignItems = "center";
+  wrap.style.gap = "4px";
+  wrap.style.marginLeft = "8px";
+
+  const n = Number(count) || 0;
+  for (let i = 0; i < n; i++) {
+    const img = document.createElement("img");
+    img.src = "./champion.png";      // <- your file in the repo root
+    img.alt = "Champion";
+    img.width = 16;
+    img.height = 16;
+    img.style.verticalAlign = "middle";
+    img.style.opacity = "0.95";
+    wrap.appendChild(img);
+  }
+
+  return wrap;
+}
 /* =========================
    Username lock (simple)
    - first time: user types username and hits Reload
