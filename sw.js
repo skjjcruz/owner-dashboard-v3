@@ -1,4 +1,4 @@
-const CACHE_NAME = "owner-dash-v1.0.2"; // bump again so the new SW definitely activates
+const CACHE_NAME = "owner-dash-v1.0.3";
 
 const ASSETS = [
   "./",
@@ -8,7 +8,7 @@ const ASSETS = [
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
-  "./champion.png"
+  "./icons/champion.png",
 ];
 
 self.addEventListener("install", (e) => {
