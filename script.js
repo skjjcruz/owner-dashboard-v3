@@ -126,12 +126,6 @@ function makeChampIcons(count) {
  ***********************/
 const CHAMP_ICON_PATH = "./icons/champion.png";
 
-const CHAMP_COUNTS_BY_USERNAME = {
-  "skjjcruz": 2,
-  "guerrero": 1,
-  "twhy123": 1,
-};
-
 function champCountForOwner(ownerId) {
   const u = state.usersById?.[String(ownerId)];
   const uname = (u?.username || "").toLowerCase().trim();
