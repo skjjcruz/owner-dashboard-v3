@@ -119,6 +119,49 @@ function makeChampIcons(count) {
 
   return wrap;
 }
+/***********************
+ * CHAMPIONS (manual)
+ * - counts by Sleeper username (recommended)
+ * - edit counts here any time
+ ***********************/
+const CHAMP_ICON_PATH = "./champion.png"; // if you put it in /icons, change to "./icons/champion.png"
+
+const CHAMP_COUNTS_BY_USERNAME = {
+  "skjjcruz": 2,
+  "guerrero": 1,
+  "twhy123": 1,
+};
+
+function champCountForOwner(ownerId) {
+  const u = state.usersById?.[String(ownerId)];
+  const uname = (u?.username || "").toLowerCase().trim();
+  return CHAMP_COUNTS_BY_USERNAME[uname] || 0;
+}
+
+function makeChampionIcons(count) {
+  if (!count) return null;
+
+  const wrap = document.createElement("span");
+  wrap.className = "champIcons";
+  wrap.style.display = "inline-flex";
+  wrap.style.gap = "4px";
+  wrap.style.marginLeft = "8px";
+  wrap.style.verticalAlign = "middle";
+
+  for (let i = 0; i < count; i++) {
+    const img = document.createElement("img");
+    img.src = CHAMP_ICON_PATH;
+    img.alt = "Champion";
+    img.width = 14;     // tiny, fits next to name
+    img.height = 14;
+    img.style.display = "inline-block";
+    img.style.objectFit = "contain";
+    img.style.verticalAlign = "middle";
+    img.onerror = () => { img.style.display = "none"; };
+    wrap.appendChild(img);
+  }
+  return wrap;
+}
 /* =========================
    Username lock (simple)
    - first time: user types username and hits Reload
