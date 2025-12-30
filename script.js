@@ -17,10 +17,10 @@ const POS_ORDER = ["QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB", "OTHER"
 const PICK_YEARS = [2026, 2027, 2028];
 // ===== League Champions (manual for now) =====
 // number = total championships won in this league
-const CHAMPIONS = {
+const CHAMP_COUNTS_BY_USERNAME = {
   "skjjcruz": 2,
-  "Guerrero": 1,
-  "TWhy123": 1
+  "guero0801": 1,
+  "twhy123": 1,
 };
 // ===== DOM =====
 const elStatus = document.getElementById("status");
