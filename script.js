@@ -240,7 +240,7 @@ function setRosterTitle(el, ownerId) {
   span.textContent = ownerDisplayWithRecord(ownerId);
   el.appendChild(span);
 
-  ✅ Champion icons (next to name)
+  //✅ Champion icons (next to name)
   const champs = champCountForOwner(ownerId);
   const champEl = makeChampionIcons(champs);
   if (champEl) el.appendChild(champEl);
