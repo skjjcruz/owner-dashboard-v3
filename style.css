@@ -478,4 +478,22 @@ td.pos{
 /* Muted NFL / misc text */
 td.nfl{
   color: #9ca3af;
+}/* ===== Champion icons (comparison header) ===== */
+.tableTitle .champIcons,
+#leftTitle .champIcons,
+#rightTitle .champIcons{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 10px;   /* space after name */
+  transform: translateY(1px); /* nudge down to align with text */
+}
+
+.tableTitle .champIcons img,
+#leftTitle .champIcons img,
+#rightTitle .champIcons img{
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  object-fit: contain;
 }
