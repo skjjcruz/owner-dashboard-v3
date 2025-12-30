@@ -233,7 +233,6 @@ function ownerDisplayWithRecord(ownerId) {
   const r = state.rosterByOwner?.[String(ownerId)];
   return `${safeName(u)} (${rosterRecord(r)})`;
 }
-
 function setRosterTitle(el, ownerId) {
   el.innerHTML = "";
 
@@ -241,6 +240,12 @@ function setRosterTitle(el, ownerId) {
   span.textContent = ownerDisplayWithRecord(ownerId);
   el.appendChild(span);
 
+  // ✅ Champion icons (next to name)
+  const champs = champCountForOwner(ownerId);
+  const champEl = makeChampionIcons(champs);
+  if (champEl) el.appendChild(champEl);
+
+  // Avatar (keep as-is)
   const img = makeAvatarImg(ownerId, 28);
   if (img) {
     img.style.marginLeft = "10px";
