@@ -104,7 +104,9 @@ body{
 .tablePane{
   background: var(--card);
   border-radius: 14px;
-  box-shadow: var(--shadow);
+  box-shadow:
+  0 0 0 1px rgba(212,175,55,0.05),
+  0 10px 30px rgba(0,0,0,0.4);
   border: 1px solid #e7eaf0;
   overflow: hidden;
   display:flex;
