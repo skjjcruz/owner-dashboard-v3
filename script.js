@@ -239,11 +239,12 @@ function setRosterTitle(el, ownerId) {
   const span = document.createElement("span");
   span.textContent = ownerDisplayWithRecord(ownerId);
   el.appendChild(span);
+  el.appendChild(makeChampionIcons(1));
 
   // ✅ Champion icons (next to name)
-  const champs = champCountForOwner(ownerId);
-  const champEl = makeChampionIcons(champs);
-  if (champEl) el.appendChild(champEl);
+  //const champs = champCountForOwner(ownerId);
+  //const champEl = makeChampionIcons(champs);
+  //if (champEl) el.appendChild(champEl);
 
   // Avatar (keep as-is)
   const img = makeAvatarImg(ownerId, 28);
