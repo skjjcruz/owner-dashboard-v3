@@ -1,4 +1,4 @@
-const CACHE_NAME = "owner-dash-v1.0.1"; // <-- bump this anytime you change CSS/JS/HTML
+const CACHE_NAME = "owner-dash-v1.0.1";
 const ASSETS = [
   "./",
   "./index.html",
@@ -7,6 +7,7 @@ const ASSETS = [
   "./manifest.webmanifest",
   "./icons/icon-192.png",
   "./icons/icon-512.png"
+  "./champion.png",
 ];
 
 self.addEventListener("install", (e) => {
