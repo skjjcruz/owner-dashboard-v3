@@ -351,4 +351,129 @@ body{
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+}/* =========================================
+   WAR ROOM THEME – DARK MODE OVERRIDE
+   SAFE ADDITIVE LAYER (v1)
+========================================= */
+
+/* App background */
+body{
+  background: #0b0f14;
+  color: #e5e7eb;
+}
+
+/* Top bar */
+.topbar{
+  background: #0f172a;
+  border-bottom: 1px solid #1f2937;
+}
+
+/* Controls */
+.controls label{
+  color: #9ca3af;
+}
+
+.controls input,
+.controls select{
+  background: #111827;
+  border: 1px solid #1f2937;
+  color: #e5e7eb;
+}
+
+#reloadBtn{
+  background: #d4af37;
+  color: #111;
+}
+
+#reloadBtn:hover{
+  background: #b8962e;
+}
+
+/* Cards */
+.teamsPane,
+.tablePane{
+  background: #111827;
+  border: 1px solid #1f2937;
+}
+
+/* Pane headers */
+.paneTitle,
+.tableTitle{
+  background: #0f172a;
+  color: #d4af37;
+  border-bottom: 1px solid #1f2937;
+}
+
+/* Teams list rows */
+.teamsList li{
+  border-bottom: 1px solid #1f2937;
+}
+
+.teamName{
+  color: #e5e7eb;
+}
+
+/* Buttons */
+.btn{
+  background: #0f172a;
+  border: 1px solid #1f2937;
+  color: #d4af37;
+}
+
+/* Tables */
+thead th{
+  background: #0f172a;
+  color: #d4af37;
+  border-bottom: 1px solid #1f2937;
+}
+
+tbody tr:hover td{
+  background: #0b1220;
+}
+
+/* POS column */
+td.pos{
+  background: #3b2f0b;   /* muted gold */
+  color: #fff;
+}
+
+/* Group headers */
+.groupRow td{
+  background: #0f172a;
+  color: #d4af37;
+}
+
+/* Separator bars */
+.sepRow td{
+  background: #1f2937;
+}
+
+/* Status colors – tuned for dark */
+#leftTable td.player.psStarter,
+#rightTable td.player.psStarter{
+  background: #064e3b;
+  color: #ecfdf5;
+}
+
+#leftTable td.player.psIR,
+#rightTable td.player.psIR{
+  background: #7f1d1d;
+  color: #fee2e2;
+}
+
+#leftTable td.player.psTaxi,
+#rightTable td.player.psTaxi{
+  background: #312e81;
+  color: #e0e7ff;
+}
+
+#leftTable td.player.psRookie,
+#rightTable td.player.psRookie{
+  background: #0c4a6e;
+  color: #e0f2fe;
+}
+
+/* Muted NFL / misc text */
+td.nfl{
+  color: #9ca3af;
 }
