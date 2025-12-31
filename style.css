@@ -492,13 +492,13 @@ td.nfl{
 .tableTitle .champIcons img,
 #leftTitle .champIcons img,
 #rightTitle .champIcons img{
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   display: inline-block;
   object-fit: contain;
 }.champIcons img {
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   margin-left: 2px;
 }/* Champion icons (comparison headers only) */
 .champIcons {
@@ -508,8 +508,8 @@ td.nfl{
 }
 
 .champIcons img {
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   object-fit: contain;
   vertical-align: middle;
 }.champIcons {
@@ -519,7 +519,7 @@ td.nfl{
 }
 
 .champIcons img {
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   display: inline-block;
 }
