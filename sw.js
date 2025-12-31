@@ -1,4 +1,4 @@
-const CACHE_NAME = "owner-dash-v1.0.2";
+const CACHE_NAME = "owner-dash-v1.0.3";
 
 const ASSETS = [
   "./",
