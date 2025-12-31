@@ -192,7 +192,7 @@ function setRosterTitle(el, ownerId) {
   el.innerHTML = "";
   el.style.display = "flex";
   el.style.alignItems = "center";
-  el.style.gap = "2px";
+  el.style.gap = "8px";
 
   const u = state.usersById?.[String(ownerId)];
   const username = (u?.username || "").toLowerCase().trim();
