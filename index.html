@@ -1,1 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+  <title>Fantasy Football Owner Dashboard</title>
+
+  <!-- Styles & App Script -->
+  <link rel="stylesheet" href="style.css" />
+  <script src="script.js" defer></script>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <!-- Theme color (Android/Chrome, etc.) -->
+  <meta name="theme-color" content="#2563eb">
+
+  <!-- iOS PWA settings -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Owner Dash">
+
+  <!-- iOS app icon (use 180 for iOS best practice) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+
+  <!-- Favicons (nice for desktop tabs/bookmarks) -->
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16.png">
+</head>
+
+<body>
+
+  <!-- ===== Top Bar ===== -->
+  <div class="topbar">
+    <div class="controls">
+      <label>
+        Username:
+        <input id="usernameInput" type="text" autocomplete="username" />
+      </label>
+
+      <label>
+        League Season:
+        <input id="seasonInput" type="text" inputmode="numeric" />
+      </label>
+
+      <label>
+        Stats Season:
+        <input id="statsSeasonInput" type="text" inputmode="numeric" value="2025" />
+      </label>
+
+      <label>
+        League:
+        <select id="leagueSelect"></select>
+      </label>
+
+      <button id="reloadBtn">Reload</button>
+    </div>
+
+    <div id="status" class="status">Ready</div>
+  </div>
+
+  <!-- ===== Main Layout ===== -->
+  <div class="layout">
+
+    <!-- Teams / Owners -->
+    <aside class="teamsPane">
+      <div class="paneTitle">Teams</div>
+      <ul id="teams" class="teamsList"></ul>
+    </aside>
+
+    <!-- Left Roster -->
+    <section class="tablePane">
+      <div class="tableTitle" id="leftTitle">Left Roster</div>
+      <div class="tableScroll">
+        <table id="leftTable">
+          <thead>
+            <tr>
+              <th class="pos">Pos</th>
+              <th class="player">Player</th>
+              <th class="yrs">Yrs</th>
+              <th class="pts">Pts</th>
+              <th class="gp">GP</th>
+              <th class="avg">Avg</th>
+              <th class="nfl">PROJ</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Right Roster -->
+    <section class="tablePane">
+      <div class="tableTitle" id="rightTitle">Right Roster</div>
+      <div class="tableScroll">
+        <table id="rightTable">
+          <thead>
+            <tr>
+              <th class="pos">Pos</th>
+              <th class="player">Player</th>
+              <th class="yrs">Yrs</th>
+              <th class="pts">Pts</th>
+              <th class="gp">GP</th>
+              <th class="avg">Avg</th>
+              <th class="nfl">PROJ</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ===== Service Worker Registration ===== -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("./sw.js")
+          .catch(err => console.error("Service Worker failed:", err));
+      });
+    }
+  </script>
+
+</body>
+</html>
