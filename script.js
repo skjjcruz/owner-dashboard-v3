@@ -202,22 +202,24 @@ function ownerDisplayWithRecord(ownerId) {
 function setRosterTitle(el, ownerId) {
   el.innerHTML = "";
 
-  const span = document.createElement("span");
-  span.textContent = ownerDisplayWithRecord(ownerId);
-  el.appendChild(span);
+  // make layout consistent (text + crowns + avatar)
+  el.style.display = "flex";
+  el.style.alignItems = "center";
+  el.style.gap = "8px";
+  el.style.flexWrap = "wrap";   // optional, prevents clipping on small screens
 
-  //✅ Champion icons (next to name)
+  const nameSpan = document.createElement("span");
+  nameSpan.textContent = ownerDisplayWithRecord(ownerId);
+  el.appendChild(nameSpan);
+
+  // Champion icons (ONLY here, not sidebar)
   const champs = champCountForOwner(ownerId);
   const champEl = makeChampionIcons(champs);
   if (champEl) el.appendChild(champEl);
 
-  // Avatar (keep as-is)
+  // Avatar
   const img = makeAvatarImg(ownerId, 28);
-  if (img) {
-    img.style.marginLeft = "10px";
-    img.style.verticalAlign = "middle";
-    el.appendChild(img);
-  }
+  if (img) el.appendChild(img);
 }
 
 /* ===== Positions / stats helpers ===== */
