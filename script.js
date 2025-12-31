@@ -111,23 +111,22 @@ function makeChampionIcons(count) {
   wrap.className = "champIcons";
   wrap.style.display = "inline-flex";
   wrap.style.gap = "4px";
-  wrap.style.marginLeft = "8px";
-  wrap.style.verticalAlign = "middle";
+  wrap.style.alignItems = "center";
 
   for (let i = 0; i < count; i++) {
     const img = document.createElement("img");
-    img.src = CHAMP_ICON_PATH;
+    img.src = `${CHAMP_ICON_PATH}?v=2`;   // cache-bust
     img.alt = "Champion";
-    img.width = 14;     // tiny, fits next to name
-    img.height = 14;
+    img.width = 18;
+    img.height = 18;
     img.style.display = "inline-block";
     img.style.objectFit = "contain";
-    img.style.verticalAlign = "middle";
     img.onerror = () => { img.style.display = "none"; };
     wrap.appendChild(img);
   }
   return wrap;
 }
+
 /* =========================
    Username lock (simple)
    - first time: user types username and hits Reload
