@@ -1,4 +1,4 @@
-const CACHE_NAME = "owner-dash-v1.0.3";
+const CACHE_NAME = "owner-dashboard-v3-v2025-12-30-2";
 
 const ASSETS = [
   "./",
