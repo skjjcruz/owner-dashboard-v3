@@ -201,22 +201,19 @@ function ownerDisplayWithRecord(ownerId) {
 function setRosterTitle(el, ownerId) {
   el.innerHTML = "";
 
-  // make layout consistent (text + crowns + avatar)
   el.style.display = "flex";
   el.style.alignItems = "center";
   el.style.gap = "8px";
-  el.style.flexWrap = "wrap";   // optional, prevents clipping on small screens
+  el.style.flexWrap = "wrap";
+
+  const champsCount = champCountForOwner(ownerId);
 
   const nameSpan = document.createElement("span");
-  const u = state.usersById?.[String(ownerId)];
-  const uname = (u?.username || "").toLowerCase().trim();
-  const champs = champCountForOwner(ownerId);
-  nameSpan.textContent = `${ownerDisplayWithRecord(ownerId)}  [${uname}=${champs}]`;
-  el.appendChild(nameSpan);
+  nameSpan.textContent = ownerDisplayWithRecord(ownerId);
+  el.appendChild(nameSpan); // ✅ keep this line
 
-  // Champion icons (ONLY here, not sidebar)
-  const champs = champCountForOwner(ownerId);
-  const champEl = makeChampionIcons(champs);
+  // Champion icons (ONLY here)
+  const champEl = makeChampionIcons(champsCount);
   if (champEl) el.appendChild(champEl);
 
   // Avatar
