@@ -91,13 +91,19 @@ function safeName(u) {
 }
 /* ===== Champion icon helpers ===== */
 
-/* ===== Champions ===== */
+// ===== Champions (ONE place only) =====
 const CHAMP_ICON_PATH = "./icons/champion.png";
+
+const CHAMP_COUNTS_BY_USERNAME = {
+  "skjjcruz": 2,
+  "guero0801": 1,
+  "twhy123": 1,
+};
 
 function champCountForOwner(ownerId) {
   const u = state.usersById?.[String(ownerId)];
-  if (!u?.username) return 0;
-  return CHAMP_COUNTS_BY_USERNAME[u.username.toLowerCase()] || 0;
+  const uname = String(u?.username || "").toLowerCase().trim();
+  return CHAMP_COUNTS_BY_USERNAME[uname] || 0;
 }
 
 function makeChampionIcons(count) {
@@ -108,11 +114,12 @@ function makeChampionIcons(count) {
 
   for (let i = 0; i < count; i++) {
     const img = document.createElement("img");
-    img.src = CHAMP_ICON_PATH;
+    img.src = `${CHAMP_ICON_PATH}?v=1`; // cache-bust
     img.alt = "Champion";
+    img.width = 18;
+    img.height = 18;
     wrap.appendChild(img);
   }
-
   return wrap;
 }
 
