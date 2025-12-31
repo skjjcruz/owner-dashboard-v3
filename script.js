@@ -91,17 +91,19 @@ function safeName(u) {
 }
 /* ===== Champion icon helpers ===== */
 
-/***********************
- * CHAMPIONS (manual)
- * - counts by Sleeper username (recommended)
- * - edit counts here any time
- ***********************/
+/* ===== Champions ===== */
 const CHAMP_ICON_PATH = "./icons/champion.png";
+
+const CHAMP_COUNTS_BY_USERNAME = {
+  skjjcruz: 2,
+  guero0801: 1,
+  twhy123: 1,
+};
 
 function champCountForOwner(ownerId) {
   const u = state.usersById?.[String(ownerId)];
-  const uname = (u?.username || "").toLowerCase().trim();
-  return CHAMP_COUNTS_BY_USERNAME[uname] || 0;
+  if (!u?.username) return 0;
+  return CHAMP_COUNTS_BY_USERNAME[u.username.toLowerCase()] || 0;
 }
 
 function makeChampionIcons(count) {
@@ -109,21 +111,14 @@ function makeChampionIcons(count) {
 
   const wrap = document.createElement("span");
   wrap.className = "champIcons";
-  wrap.style.display = "inline-flex";
-  wrap.style.gap = "4px";
-  wrap.style.alignItems = "center";
 
   for (let i = 0; i < count; i++) {
     const img = document.createElement("img");
-    img.src = "https://sleepercdn.com/images/v2/icons/trophy.png";
+    img.src = CHAMP_ICON_PATH;
     img.alt = "Champion";
-    img.width = 18;
-    img.height = 18;
-    img.style.display = "inline-block";
-    img.style.objectFit = "contain";
-    img.onerror = () => { img.style.display = "none"; };
     wrap.appendChild(img);
   }
+
   return wrap;
 }
 
@@ -200,25 +195,20 @@ function ownerDisplayWithRecord(ownerId) {
 }
 function setRosterTitle(el, ownerId) {
   el.innerHTML = "";
-
   el.style.display = "flex";
   el.style.alignItems = "center";
   el.style.gap = "8px";
-  el.style.flexWrap = "wrap";
-
-  const champsCount = champCountForOwner(ownerId);
 
   const nameSpan = document.createElement("span");
   nameSpan.textContent = ownerDisplayWithRecord(ownerId);
-  el.appendChild(nameSpan); // ✅ keep this line
+  el.appendChild(nameSpan);
 
-  // Champion icons (ONLY here)
-  const champEl = makeChampionIcons(champsCount);
-  if (champEl) el.appendChild(champEl);
+  const champCount = champCountForOwner(ownerId);
+  const champIcons = makeChampionIcons(champCount);
+  if (champIcons) el.appendChild(champIcons);
 
-  // Avatar
-  const img = makeAvatarImg(ownerId, 28);
-  if (img) el.appendChild(img);
+  const avatar = makeAvatarImg(ownerId, 28);
+  if (avatar) el.appendChild(avatar);
 }
 
 /* ===== Positions / stats helpers ===== */
