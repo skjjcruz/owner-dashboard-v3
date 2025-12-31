@@ -210,8 +210,9 @@ function setRosterTitle(el, ownerId) {
   const nameSpan = document.createElement("span");
   const u = state.usersById?.[String(ownerId)];
   const uname = (u?.username || "").toLowerCase().trim();
+  console.log("OWNER", ownerId, state.usersById?.[String(ownerId)]);
   const champs = champCountForOwner(ownerId);
-
+  console.log("CHAMPS", ownerId, champs);
   nameSpan.textContent = `${ownerDisplayWithRecord(ownerId)}  [${uname}=${champs}]`;
   el.appendChild(nameSpan);
 
