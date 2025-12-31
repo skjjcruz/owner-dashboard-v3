@@ -197,14 +197,13 @@ function setRosterTitle(el, ownerId) {
   nameSpan.textContent = ownerDisplayWithRecord(ownerId);
   el.appendChild(nameSpan);
 
-  const champCount = champCountForOwner(ownerId);
-  const champIcons = makeChampionIcons(champCount);
-  if (champIcons) el.appendChild(champIcons);
+  // TEMP FORCE: always show 2 icons
+  const champEl = makeChampionIcons(2);
+  el.appendChild(champEl);
 
   const avatar = makeAvatarImg(ownerId, 28);
   if (avatar) el.appendChild(avatar);
 }
-
 /* ===== Positions / stats helpers ===== */
 function normalizePos(pos) {
   if (!pos) return "OTHER";
