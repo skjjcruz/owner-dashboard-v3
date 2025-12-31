@@ -197,21 +197,31 @@ function setRosterTitle(el, ownerId) {
   const u = state.usersById?.[String(ownerId)];
   const username = (u?.username || "").toLowerCase().trim();
 
+  const champCountMap = {
+    skjjcruz: 2,
+    guero0801: 1,
+    twhy123: 1,
+  };
+
+  const champCount = champCountMap[username] || 0;
+
   const nameSpan = document.createElement("span");
-  nameSpan.textContent = ownerDisplayWithRecord(ownerId);
+  nameSpan.textContent = `${ownerDisplayWithRecord(ownerId)}  [${username || "NO_USERNAME"}=${champCount}]`;
   el.appendChild(nameSpan);
 
   const avatar = makeAvatarImg(ownerId, 28);
   if (avatar) el.appendChild(avatar);
 
-  const champCount = {
-    skjjcruz: 2,
-    guero0801: 1,
-    twhy123: 1,
-  }[username] || 0;
+  // force local champion.png + cache-bust
+  const champEl = makeChampionIcons(champCount);
+  if (champEl) el.appendChild(champEl);
 
-  const champIcons = makeChampionIcons(champCount);
-  if (champIcons) el.appendChild(champIcons);
+  // remove the debug bracket after 10s (optional)
+  setTimeout(() => {
+    if (nameSpan?.textContent?.includes("[")) {
+      nameSpan.textContent = ownerDisplayWithRecord(ownerId);
+    }
+  }, 10000);
 }
 
 /* ===== Positions / stats helpers ===== */
