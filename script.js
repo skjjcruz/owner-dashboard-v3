@@ -115,7 +115,7 @@ function makeChampionIcons(count) {
 
   for (let i = 0; i < count; i++) {
     const img = document.createElement("img");
-    img.src = `${CHAMP_ICON_PATH}?v=2`;   // cache-bust
+    img.src = "https://sleepercdn.com/images/v2/icons/trophy.png";
     img.alt = "Champion";
     img.width = 18;
     img.height = 18;
