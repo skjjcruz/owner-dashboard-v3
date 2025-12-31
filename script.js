@@ -208,7 +208,11 @@ function setRosterTitle(el, ownerId) {
   el.style.flexWrap = "wrap";   // optional, prevents clipping on small screens
 
   const nameSpan = document.createElement("span");
-  nameSpan.textContent = ownerDisplayWithRecord(ownerId);
+  const u = state.usersById?.[String(ownerId)];
+  const uname = (u?.username || "").toLowerCase().trim();
+  const champs = champCountForOwner(ownerId);
+
+  nameSpan.textContent = `${ownerDisplayWithRecord(ownerId)}  [${uname}=${champs}]`;
   el.appendChild(nameSpan);
 
   // Champion icons (ONLY here, not sidebar)
