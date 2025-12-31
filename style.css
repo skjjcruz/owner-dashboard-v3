@@ -512,4 +512,14 @@ td.nfl{
   height: 16px;
   object-fit: contain;
   vertical-align: middle;
+}.champIcons {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: 6px;
+}
+
+.champIcons img {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
 }
