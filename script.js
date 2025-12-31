@@ -90,35 +90,7 @@ function safeName(u) {
   return u?.display_name || u?.username || "Unknown";
 }
 /* ===== Champion icon helpers ===== */
-function champCountForUser(userObj) {
-  // match by username first; fallback to display_name
-  const uname = userObj?.username || "";
-  const dname = userObj?.display_name || "";
-  return CHAMPIONS[uname] ?? CHAMPIONS[dname] ?? 0;
-}
 
-function makeChampIcons(count) {
-  const wrap = document.createElement("span");
-  wrap.className = "champWrap";
-  wrap.style.display = "inline-flex";
-  wrap.style.alignItems = "center";
-  wrap.style.gap = "4px";
-  wrap.style.marginLeft = "8px";
-
-  const n = Number(count) || 0;
-  for (let i = 0; i < n; i++) {
-    const img = document.createElement("img");
-    img.src = "./champion.png";      // <- your file in the repo root
-    img.alt = "Champion";
-    img.width = 16;
-    img.height = 16;
-    img.style.verticalAlign = "middle";
-    img.style.opacity = "0.95";
-    wrap.appendChild(img);
-  }
-
-  return wrap;
-}
 /***********************
  * CHAMPIONS (manual)
  * - counts by Sleeper username (recommended)
