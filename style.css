@@ -496,4 +496,8 @@ td.nfl{
   height: 18px;
   display: inline-block;
   object-fit: contain;
+}.champIcons img {
+  width: 18px;
+  height: 18px;
+  margin-left: 2px;
 }
