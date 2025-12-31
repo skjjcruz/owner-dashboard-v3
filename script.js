@@ -194,17 +194,20 @@ function setRosterTitle(el, ownerId) {
   el.style.alignItems = "center";
   el.style.gap = "8px";
 
+  // Name
   const nameSpan = document.createElement("span");
   nameSpan.textContent = ownerDisplayWithRecord(ownerId);
   el.appendChild(nameSpan);
 
+  // Avatar
   const avatar = makeAvatarImg(ownerId, 28);
   if (avatar) el.appendChild(avatar);
 
-  const champCount = champCountForOwner(ownerId);
-  const champEl = makeChampionIcons(champCount);
+  // Champion icons (TEMP: still forced)
+  const champEl = makeChampionIcons(2);
   if (champEl) el.appendChild(champEl);
 }
+
 /* ===== Positions / stats helpers ===== */
 function normalizePos(pos) {
   if (!pos) return "OTHER";
