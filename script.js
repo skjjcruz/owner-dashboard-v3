@@ -192,20 +192,26 @@ function setRosterTitle(el, ownerId) {
   el.innerHTML = "";
   el.style.display = "flex";
   el.style.alignItems = "center";
-  el.style.gap = "8px";
+  el.style.gap = "2px";
 
-  // Name
+  const u = state.usersById?.[String(ownerId)];
+  const username = (u?.username || "").toLowerCase().trim();
+
   const nameSpan = document.createElement("span");
   nameSpan.textContent = ownerDisplayWithRecord(ownerId);
   el.appendChild(nameSpan);
 
-  // Avatar
   const avatar = makeAvatarImg(ownerId, 28);
   if (avatar) el.appendChild(avatar);
 
-  // Champion icons (TEMP: still forced)
-  const champEl = makeChampionIcons(2);
-  if (champEl) el.appendChild(champEl);
+  const champCount = {
+    skjjcruz: 2,
+    guero0801: 1,
+    twhy123: 1,
+  }[username] || 0;
+
+  const champIcons = makeChampionIcons(champCount);
+  if (champIcons) el.appendChild(champIcons);
 }
 
 /* ===== Positions / stats helpers ===== */
