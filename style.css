@@ -500,4 +500,16 @@ td.nfl{
   width: 18px;
   height: 18px;
   margin-left: 2px;
+}/* Champion icons (comparison headers only) */
+.champIcons {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: 6px;
+}
+
+.champIcons img {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  vertical-align: middle;
 }
