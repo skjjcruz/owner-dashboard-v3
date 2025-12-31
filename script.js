@@ -94,6 +94,12 @@ function safeName(u) {
 // ===== Champions (ONE place only) =====
 const CHAMP_ICON_PATH = "./icons/champion.png";
 
+const CHAMP_COUNTS_BY_USERNAME = {
+  "skjjcruz": 2,
+  "guero0801": 1,
+  "twhy123": 1,
+}
+
 function champCountForOwner(ownerId) {
   const u = state.usersById?.[String(ownerId)];
   const uname = String(u?.username || "").toLowerCase().trim();
