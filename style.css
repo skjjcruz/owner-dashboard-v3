@@ -484,8 +484,8 @@ td.nfl{
 #rightTitle .champIcons{
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  margin-left: 10px;   /* space after name */
+  gap: 2px;
+  margin-left: 2px;   /* space after name */
   transform: translateY(1px); /* nudge down to align with text */
 }
 
@@ -504,7 +504,7 @@ td.nfl{
 .champIcons {
   display: inline-flex;
   gap: 2px;
-  margin-left: 6px;
+  margin-left: 2px;
 }
 
 .champIcons img {
@@ -515,7 +515,7 @@ td.nfl{
 }.champIcons {
   display: inline-flex;
   gap: 2px;
-  margin-left: 6px;
+  margin-left: 2px;
 }
 
 .champIcons img {
