@@ -503,7 +503,7 @@ td.nfl{
 }/* Champion icons (comparison headers only) */
 .champIcons {
   display: inline-flex;
-  gap: 4px;
+  gap: 2px;
   margin-left: 6px;
 }
 
@@ -514,7 +514,7 @@ td.nfl{
   vertical-align: middle;
 }.champIcons {
   display: inline-flex;
-  gap: 4px;
+  gap: 2px;
   margin-left: 6px;
 }
 
