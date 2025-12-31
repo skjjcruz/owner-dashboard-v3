@@ -7,21 +7,21 @@
  * - Season stats: Sleeper /stats/{sport}/regular/{season}
  * - Weekly projections: Sleeper per-player projection endpoint
  * - Projection points calculated using the league's scoring_settings
+ *
+ * IMPORTANT CHANGE:
+ * - Split "League Season" (league/rosters) vs "Stats Season" (season stats freeze)
+ *   - state.season       => league season for leagues/rosters/picks
+ *   - state.statsSeason  => stats season for /stats/... endpoint (can stay 2025)
  *************************************************/
 
 const SPORT = "nfl";
-const DEFAULT_SEASON = "2025";
+const DEFAULT_SEASON = "2025";        // League season (rosters/leagues)
+const DEFAULT_STATS_SEASON = "2025";  // Stats season (freeze stats here)
 const DEFAULT_USERNAME = "";
 
 const POS_ORDER = ["QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB", "OTHER"];
 const PICK_YEARS = [2026, 2027, 2028];
-// ===== League Champions (manual for now) =====
-// number = total championships won in this league
-const CHAMP_COUNTS_BY_USERNAME = {
-  "skjjcruz": 2,
-  "guero0801": 1,
-  "twhy123": 1,
-};
+
 // ===== DOM =====
 const elStatus = document.getElementById("status");
 const elTeams = document.getElementById("teams");
@@ -31,7 +31,8 @@ const leftTBody = document.querySelector("#leftTable tbody");
 const rightTBody = document.querySelector("#rightTable tbody");
 
 const elUsername = document.getElementById("usernameInput");
-const elSeason = document.getElementById("seasonInput");
+const elSeason = document.getElementById("seasonInput");                 // league season input
+const elStatsSeason = document.getElementById("statsSeasonInput");       // stats season input (NEW)
 const elLeagueSelect = document.getElementById("leagueSelect");
 const elReloadBtn = document.getElementById("reloadBtn");
 
@@ -41,7 +42,8 @@ const LS_LOCKED_USERNAME = "od_locked_username";
 // ===== State =====
 let state = {
   username: "",
-  season: DEFAULT_SEASON,
+  season: DEFAULT_SEASON,             // league season
+  statsSeason: DEFAULT_STATS_SEASON,  // stats season (freeze)
 
   // Sleeper core
   user: null,
@@ -77,7 +79,7 @@ let state = {
 };
 
 function setStatus(msg) {
-  elStatus.textContent = msg;
+  if (elStatus) elStatus.textContent = msg;
 }
 
 async function fetchJSON(url) {
@@ -88,33 +90,6 @@ async function fetchJSON(url) {
 
 function safeName(u) {
   return u?.display_name || u?.username || "Unknown";
-}
-/* ===== Champion icon helpers ===== */
-
-// ===== Champions (ONE place only) =====
-const CHAMP_ICON_PATH = "./icons/champion.png";
-
-function champCountForOwner(ownerId) {
-  const u = state.usersById?.[String(ownerId)];
-  const uname = String(u?.username || "").toLowerCase().trim();
-  return CHAMP_COUNTS_BY_USERNAME[uname] || 0;
-}
-
-function makeChampionIcons(count) {
-  if (!count) return null;
-
-  const wrap = document.createElement("span");
-  wrap.className = "champIcons";
-
-  for (let i = 0; i < count; i++) {
-    const img = document.createElement("img");
-    img.src = `${CHAMP_ICON_PATH}?v=1`; // cache-bust
-    img.alt = "Champion";
-    img.width = 18;
-    img.height = 18;
-    wrap.appendChild(img);
-  }
-  return wrap;
 }
 
 /* =========================
@@ -127,21 +102,21 @@ function initUsernameLockUI() {
 
   if (locked) {
     state.username = locked;
-    elUsername.value = locked;
-    elUsername.disabled = true;
+    if (elUsername) elUsername.value = locked;
+    if (elUsername) elUsername.disabled = true;
   } else {
-    // allow editing until first successful loadLeagues
-    elUsername.value = DEFAULT_USERNAME;
-    elUsername.disabled = false;
+    if (elUsername) elUsername.value = DEFAULT_USERNAME;
+    if (elUsername) elUsername.disabled = false;
   }
 
-  elSeason.value = DEFAULT_SEASON;
+  if (elSeason) elSeason.value = DEFAULT_SEASON;
+  if (elStatsSeason) elStatsSeason.value = DEFAULT_STATS_SEASON;
 }
 
 function lockUsername(username) {
   localStorage.setItem(LS_LOCKED_USERNAME, username);
-  elUsername.value = username;
-  elUsername.disabled = true;
+  if (elUsername) elUsername.value = username;
+  if (elUsername) elUsername.disabled = true;
 }
 
 /* ===== Avatar helpers ===== */
@@ -188,40 +163,21 @@ function ownerDisplayWithRecord(ownerId) {
   const r = state.rosterByOwner?.[String(ownerId)];
   return `${safeName(u)} (${rosterRecord(r)})`;
 }
+
 function setRosterTitle(el, ownerId) {
+  if (!el) return;
   el.innerHTML = "";
-  el.style.display = "flex";
-  el.style.alignItems = "center";
-  el.style.gap = "8px";
 
-  const u = state.usersById?.[String(ownerId)];
-  const username = (u?.username || "").toLowerCase().trim();
+  const span = document.createElement("span");
+  span.textContent = ownerDisplayWithRecord(ownerId);
+  el.appendChild(span);
 
-  const champCountMap = {
-    skjjcruz: 2,
-    guero0801: 1,
-    twhy123: 1,
-  };
-
-  const champCount = champCountMap[username] || 0;
-
-  const nameSpan = document.createElement("span");
-  nameSpan.textContent = `${ownerDisplayWithRecord(ownerId)}  [${username || "NO_USERNAME"}=${champCount}]`;
-  el.appendChild(nameSpan);
-
-  const avatar = makeAvatarImg(ownerId, 28);
-  if (avatar) el.appendChild(avatar);
-
-  // force local champion.png + cache-bust
-  const champEl = makeChampionIcons(champCount);
-  if (champEl) el.appendChild(champEl);
-
-  // remove the debug bracket after 10s (optional)
-  setTimeout(() => {
-    if (nameSpan?.textContent?.includes("[")) {
-      nameSpan.textContent = ownerDisplayWithRecord(ownerId);
-    }
-  }, 10000);
+  const img = makeAvatarImg(ownerId, 28);
+  if (img) {
+    img.style.marginLeft = "10px";
+    img.style.verticalAlign = "middle";
+    el.appendChild(img);
+  }
 }
 
 /* ===== Positions / stats helpers ===== */
@@ -254,7 +210,7 @@ function playerStatusClass(roster, playerObj) {
 }
 
 function clearTable(tbody) {
-  tbody.innerHTML = "";
+  if (tbody) tbody.innerHTML = "";
 }
 
 function trRow(cells, className = "") {
@@ -312,14 +268,9 @@ function fantasyPointsFromScoring(statsObj, scoring) {
 
 /* =========================
    Weekly Projections
-   - Get current week from /v1/state/nfl
-   - Fetch per-player projection stats for that week
-   - Convert to points using league scoring
 ========================= */
 
 async function loadNFLState() {
-  // This endpoint is very lightweight and gives current week.
-  // If it fails, we default to week 1.
   try {
     const s = await fetchJSON(`https://api.sleeper.app/v1/state/${SPORT}`);
     state.nflState = s;
@@ -331,9 +282,7 @@ async function loadNFLState() {
 }
 
 function projectionEndpoint(playerId) {
-  // Per-player projection endpoint (works well with caching + small rosters)
-  // Example: https://api.sleeper.app/projections/nfl/player/1234?season=2025&season_type=regular&week=17
-  const season = encodeURIComponent(String(state.season));
+  const season = encodeURIComponent(String(state.season)); // projections follow league season
   const week = encodeURIComponent(String(state.week || 1));
   return `https://api.sleeper.app/projections/${SPORT}/player/${playerId}?season=${season}&season_type=regular&week=${week}`;
 }
@@ -342,7 +291,7 @@ function scheduleProjectionRerender() {
   if (state._projRerenderTimer) return;
   state._projRerenderTimer = setTimeout(() => {
     state._projRerenderTimer = null;
-    renderCompareTables(); // refresh visible rows with filled projections
+    renderCompareTables();
   }, 200);
 }
 
@@ -351,15 +300,11 @@ async function ensureProjectionForPlayer(playerId) {
   if (!pid) return;
 
   if (state.projStatsByPlayerId[pid]) return;
-
   if (state._projInFlight[pid]) return;
 
   state._projInFlight[pid] = (async () => {
     try {
       const obj = await fetchJSON(projectionEndpoint(pid));
-
-      // Sleeper projection payloads vary a bit; normalize to "stats"
-      // Common patterns: { stats: {...} } OR { ...statsKeys }
       const stats = obj?.stats && typeof obj.stats === "object" ? obj.stats : obj;
 
       if (stats && typeof stats === "object") {
@@ -380,13 +325,11 @@ function getProjectionPoints(playerObj) {
 
   const projStats = state.projStatsByPlayerId[pid];
   if (!projStats) {
-    // trigger async fetch and show placeholder
     ensureProjectionForPlayer(pid);
     return "…";
   }
 
   const pts = fantasyPointsFromScoring(projStats, state.scoring);
-  // show one number like 12.4
   return pts ? format1(pts) : "0.0";
 }
 
@@ -395,7 +338,7 @@ function primeProjectionsForRoster(roster) {
   for (const pid of roster.players) ensureProjectionForPlayer(pid);
 }
 
-/* ===== Group players by position and sort (by season pts like before) ===== */
+/* ===== Group players by position and sort (by stats points) ===== */
 function groupPlayers(playerIds) {
   const groups = {};
   for (const pid of playerIds || []) {
@@ -477,7 +420,6 @@ function buildPicksByOwner() {
   const mode = detectPickIdMode();
   const ownerByKey = {};
 
-  // Baseline: each roster owns its own original picks
   for (const r of state.rosters) {
     const originRosterId = String(r.roster_id);
     const baselineOwnerUserId = String(r.owner_id);
@@ -489,7 +431,6 @@ function buildPicksByOwner() {
     }
   }
 
-  // Override with traded picks
   for (const tp of state.tradedPicks || []) {
     const y = Number(tp.season);
     if (!PICK_YEARS.includes(y)) continue;
@@ -581,6 +522,7 @@ function addDraftPicksSection(tbody, ownerId) {
 
 /* ===== Teams list ===== */
 function renderTeamsList() {
+  if (!elTeams) return;
   elTeams.innerHTML = "";
 
   const sortedRosters = [...state.rosters].sort((a, b) => {
@@ -623,12 +565,9 @@ function renderTeamsList() {
     bL.addEventListener("click", () => {
       state.currentLeftOwnerId = r.owner_id;
       setRosterTitle(elLeftTitle, r.owner_id);
-
-      // prime projection fetches for that roster
       primeProjectionsForRoster(state.rosterByOwner[r.owner_id]);
-
       renderCompareTables();
-      setStatus(`Ready ✅ (Left loaded) — Week ${state.week || 1}`);
+      setStatus(`Ready ✅ (Left loaded) — Week ${state.week || 1} — Stats ${state.statsSeason}`);
     });
 
     const bR = document.createElement("button");
@@ -637,11 +576,9 @@ function renderTeamsList() {
     bR.addEventListener("click", () => {
       state.currentRightOwnerId = r.owner_id;
       setRosterTitle(elRightTitle, r.owner_id);
-
       primeProjectionsForRoster(state.rosterByOwner[r.owner_id]);
-
       renderCompareTables();
-      setStatus(`Ready ✅ (Right loaded) — Week ${state.week || 1}`);
+      setStatus(`Ready ✅ (Right loaded) — Week ${state.week || 1} — Stats ${state.statsSeason}`);
     });
 
     btnWrap.appendChild(bL);
@@ -748,11 +685,13 @@ function renderCompareTables() {
             { className: "pts", text: pts ? format1(pts) : "" },
             { className: "gp", text: gp ? String(gp) : "" },
             { className: "avg", text: gp ? format1(avg) : "" },
-            { className: "nfl", text: proj }, // <- PROJ value in the last column
+            { className: "nfl", text: proj },
           ])
         );
       } else {
-        leftTBody.appendChild(trRow([{ text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }], "emptyRow"));
+        leftTBody.appendChild(
+          trRow([{ text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }], "emptyRow")
+        );
       }
 
       // RIGHT
@@ -788,7 +727,9 @@ function renderCompareTables() {
           ])
         );
       } else {
-        rightTBody.appendChild(trRow([{ text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }], "emptyRow"));
+        rightTBody.appendChild(
+          trRow([{ text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }], "emptyRow")
+        );
       }
     }
 
@@ -796,7 +737,6 @@ function renderCompareTables() {
     rightTBody.appendChild(trRow([{ text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }], "sepRow"));
   }
 
-  // Picks at bottom
   addDraftPicksSection(leftTBody, state.currentLeftOwnerId);
   addDraftPicksSection(rightTBody, state.currentRightOwnerId);
 }
@@ -805,8 +745,9 @@ function renderCompareTables() {
 async function loadLeagues() {
   const locked = localStorage.getItem(LS_LOCKED_USERNAME);
 
-  state.username = locked ? locked : (elUsername.value || "").trim();
-  state.season = (elSeason.value || "").trim() || DEFAULT_SEASON;
+  state.username = locked ? locked : (elUsername?.value || "").trim();
+  state.season = (elSeason?.value || "").trim() || DEFAULT_SEASON;                 // league season
+  state.statsSeason = (elStatsSeason?.value || "").trim() || DEFAULT_STATS_SEASON; // stats season (freeze)
 
   if (!state.username) {
     setStatus("Enter a Sleeper username.");
@@ -819,11 +760,12 @@ async function loadLeagues() {
   setStatus("Loading Sleeper user…");
   state.user = await fetchJSON(`https://api.sleeper.app/v1/user/${encodeURIComponent(state.username)}`);
 
-  // Lock username after we confirm it exists
   if (!locked) lockUsername(state.username);
 
   setStatus("Loading leagues…");
   state.leagues = await fetchJSON(`https://api.sleeper.app/v1/user/${state.user.user_id}/leagues/${SPORT}/${state.season}`);
+
+  if (!elLeagueSelect) return;
 
   elLeagueSelect.innerHTML = "";
   if (!state.leagues.length) {
@@ -849,11 +791,13 @@ async function loadLeagues() {
   elLeagueSelect.value = auto;
   state.leagueId = auto;
 
-  setStatus(`League list loaded ✅ — Week ${state.week || 1}`);
+  setStatus(`League list loaded ✅ — Week ${state.week || 1} — Stats ${state.statsSeason}`);
 }
 
 /* ===== Load league + users + rosters + stats ===== */
 async function loadLeagueData() {
+  if (!elLeagueSelect) return;
+
   state.leagueId = elLeagueSelect.value;
   if (!state.leagueId) return;
 
@@ -864,7 +808,6 @@ async function loadLeagueData() {
   const rounds = state.league?.settings?.draft_rounds ?? state.league?.draft_settings?.rounds ?? 7;
   state.draftRounds = Number(rounds) || 7;
 
-  // reset projections cache when league changes (scoring may change)
   state.projStatsByPlayerId = {};
   state._projInFlight = {};
 
@@ -902,10 +845,10 @@ async function loadLeagueData() {
     state.playersById = await fetchJSON(`https://api.sleeper.app/v1/players/${SPORT}`);
   }
 
-  setStatus("Loading season stats…");
+  setStatus(`Loading season stats (${state.statsSeason})…`);
   let statsRaw = null;
   try {
-    statsRaw = await fetchJSON(`https://api.sleeper.app/v1/stats/${SPORT}/regular/${state.season}`);
+    statsRaw = await fetchJSON(`https://api.sleeper.app/v1/stats/${SPORT}/regular/${state.statsSeason}`);
   } catch (e) {
     statsRaw = null;
   }
@@ -925,13 +868,13 @@ async function loadLeagueData() {
 
   state.currentLeftOwnerId = null;
   state.currentRightOwnerId = null;
-  elLeftTitle.textContent = "Left Roster";
-  elRightTitle.textContent = "Right Roster";
+  if (elLeftTitle) elLeftTitle.textContent = "Left Roster";
+  if (elRightTitle) elRightTitle.textContent = "Right Roster";
 
   renderTeamsList();
   renderCompareTables();
 
-  setStatus(`Ready ✅ (Tap L / R on a team) — Week ${state.week || 1}`);
+  setStatus(`Ready ✅ (Tap L / R on a team) — Week ${state.week || 1} — Stats ${state.statsSeason}`);
 }
 
 /* ===== Boot / reload wiring ===== */
@@ -945,16 +888,18 @@ async function fullReload() {
   }
 }
 
-elReloadBtn.addEventListener("click", fullReload);
+if (elReloadBtn) elReloadBtn.addEventListener("click", fullReload);
 
-elLeagueSelect.addEventListener("change", async () => {
-  try {
-    await loadLeagueData();
-  } catch (err) {
-    console.error(err);
-    setStatus(`Error: ${err.message}`);
-  }
-});
+if (elLeagueSelect) {
+  elLeagueSelect.addEventListener("change", async () => {
+    try {
+      await loadLeagueData();
+    } catch (err) {
+      console.error(err);
+      setStatus(`Error: ${err.message}`);
+    }
+  });
+}
 
 // Boot
 initUsernameLockUI();
