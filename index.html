@@ -13,18 +13,16 @@
   <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.webmanifest">
 
-  <!-- Theme color (Android/Chrome, etc.) -->
+  <!-- Theme color -->
   <meta name="theme-color" content="#2563eb">
 
-  <!-- iOS PWA settings -->
+  <!-- iOS PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Owner Dash">
 
-  <!-- iOS app icon (use 180 for iOS best practice) -->
+  <!-- Icons -->
   <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
-
-  <!-- Favicons (nice for desktop tabs/bookmarks) -->
   <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16.png">
 </head>
@@ -34,6 +32,7 @@
   <!-- ===== Top Bar ===== -->
   <div class="topbar">
     <div class="controls">
+
       <label>
         Username:
         <input id="usernameInput" type="text" autocomplete="username" />
@@ -41,12 +40,20 @@
 
       <label>
         League Season:
-        <input id="seasonInput" type="text" inputmode="numeric" />
+        <select id="seasonInput">
+          <option value="2024">2024</option>
+          <option value="2025">2025</option>
+          <option value="2026" selected>2026</option>
+        </select>
       </label>
 
       <label>
         Stats Season:
-        <input id="statsSeasonInput" type="text" inputmode="numeric" value="2025" />
+        <select id="statsSeasonInput">
+          <option value="2023">2023</option>
+          <option value="2024">2024</option>
+          <option value="2025" selected>2025</option>
+        </select>
       </label>
 
       <label>
@@ -55,6 +62,7 @@
       </label>
 
       <button id="reloadBtn">Reload</button>
+
     </div>
 
     <div id="status" class="status">Ready</div>
@@ -63,7 +71,7 @@
   <!-- ===== Main Layout ===== -->
   <div class="layout">
 
-    <!-- Teams / Owners -->
+    <!-- Teams -->
     <aside class="teamsPane">
       <div class="paneTitle">Teams</div>
       <ul id="teams" class="teamsList"></ul>
@@ -113,7 +121,7 @@
 
   </div>
 
-  <!-- ===== Service Worker Registration ===== -->
+  <!-- ===== Service Worker ===== -->
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
