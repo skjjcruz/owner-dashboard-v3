@@ -522,4 +522,101 @@ td.nfl{
   width: 30px;
   height: 30px;
   display: inline-block;
+}/* =========================
+   Layout: Top bar redesign
+========================= */
+
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between; /* pushes status to far right */
+  gap:12px;
+  padding:10px 12px;
+}
+
+.controls{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:10px 14px;
+}
+
+.status{
+  margin-left:auto;
+  white-space:nowrap;
+}
+
+/* =========================
+   Main layout: left column + tables column
+========================= */
+
+.layout{
+  display:flex;
+  gap:12px;
+  padding:12px;
+}
+
+.leftColumn{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  width:320px;           /* adjust if you want wider/narrower */
+  min-width:260px;
+  flex:0 0 auto;
+}
+
+.tablesColumn{
+  display:flex;
+  gap:12px;
+  flex:1 1 auto;
+  min-width:0;           /* prevents table overflow on iOS */
+}
+
+/* Keep your table panes behaving nicely */
+.tablePane{
+  flex:1 1 0;
+  min-width:0;
+}
+
+/* =========================
+   Activity / Transactions pane
+========================= */
+
+.activityPane{
+  display:flex;
+  flex-direction:column;
+  border:1px solid rgba(0,0,0,.12);
+  border-radius:10px;
+  overflow:hidden;
+  background:#fff;
+}
+
+.activityBody{
+  padding:10px;
+  max-height:240px;      /* makes it a nice box; tweak as needed */
+  overflow:auto;
+}
+
+.activityEmpty{
+  opacity:.7;
+  font-size:.95rem;
+}
+
+/* =========================
+   Mobile: stack columns
+========================= */
+
+@media (max-width: 900px){
+  .layout{
+    flex-direction:column;
+  }
+
+  .leftColumn{
+    width:100%;
+    min-width:0;
+  }
+
+  .tablesColumn{
+    flex-direction:column;
+  }
 }
