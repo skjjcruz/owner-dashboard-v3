@@ -1,26 +1,23 @@
 /*************************************************
  * Owner Dashboard – Sleeper Compare + Stats + Picks + Weekly Projections
+ * + Transactions / League Activity (everything Sleeper allows)
  *
  * Columns:
  * Pos | Player | Yrs | Pts | GP | Avg | PROJ   <-- PROJ replaces NFL team
  *
- * - Season stats: Sleeper /stats/{sport}/regular/{season}
+ * - Season stats: Sleeper /stats/{sport}/regular/{statsSeason}
  * - Weekly projections: Sleeper per-player projection endpoint
  * - Projection points calculated using the league's scoring_settings
+ *
+ * NEW:
+ * - Separate "League Season" (league list) vs "Stats Season" (stats endpoint)
+ * - Transactions feed (league activity) rendered in #activityList (if present)
  *************************************************/
 
 const SPORT = "nfl";
-
-// Default behavior you wanted:
-// - League season defaults to 2026
-// - Stats season defaults to 2025 (keep last year's stats)
-const DEFAULT_LEAGUE_SEASON = "2026";
-const DEFAULT_STATS_SEASON = "2025";
+const DEFAULT_LEAGUE_SEASON = "2026"; // default league season
+const DEFAULT_STATS_SEASON = "2025";  // default stats season (keep last season stats)
 const DEFAULT_USERNAME = "";
-
-// Dropdown year range (edit if you want more years)
-const LEAGUE_SEASON_YEARS = ["2023", "2024", "2025", "2026"];
-const STATS_SEASON_YEARS = ["2023", "2024", "2025"];
 
 const POS_ORDER = ["QB", "RB", "WR", "TE", "K", "DEF", "DL", "LB", "DB", "OTHER"];
 const PICK_YEARS = [2026, 2027, 2028];
@@ -34,19 +31,25 @@ const leftTBody = document.querySelector("#leftTable tbody");
 const rightTBody = document.querySelector("#rightTable tbody");
 
 const elUsername = document.getElementById("usernameInput");
-const elSeason = document.getElementById("seasonInput");          // League Season (dropdown)
-const elStatsSeason = document.getElementById("statsSeasonInput"); // Stats Season (dropdown)
+const elSeason = document.getElementById("seasonInput");             // League Season
+const elStatsSeason = document.getElementById("statsSeasonInput");   // Stats Season
 const elLeagueSelect = document.getElementById("leagueSelect");
 const elReloadBtn = document.getElementById("reloadBtn");
 
+// OPTIONAL (only if your HTML includes it)
+const elActivityList = document.getElementById("activityList");
+
 // ===== LocalStorage keys =====
 const LS_LOCKED_USERNAME = "od_locked_username";
+const LS_LEAGUE_SEASON = "od_league_season";
+const LS_STATS_SEASON = "od_stats_season";
+const LS_LEAGUE_ID = "od_league_id";
 
 // ===== State =====
 let state = {
   username: "",
-  season: DEFAULT_LEAGUE_SEASON,       // league season
-  statsSeason: DEFAULT_STATS_SEASON,   // stats season
+  leagueSeason: DEFAULT_LEAGUE_SEASON,
+  statsSeason: DEFAULT_STATS_SEASON,
 
   // Sleeper core
   user: null,
@@ -79,10 +82,14 @@ let state = {
   tradedPicks: [],
   picksByOwnerId: {}, // user_id -> [{year, round, fromOwnerId}]
   draftRounds: 7,
+
+  // Activity
+  transactions: [],
+  matchups: [],      // week matchups (optional helper for some activity labels)
 };
 
 function setStatus(msg) {
-  elStatus.textContent = msg;
+  if (elStatus) elStatus.textContent = msg;
 }
 
 async function fetchJSON(url) {
@@ -96,26 +103,9 @@ function safeName(u) {
 }
 
 /* =========================
-   Dropdown helpers
+   Username + season init
 ========================= */
-function fillSelect(el, years, defaultVal) {
-  if (!el) return;
-  el.innerHTML = "";
-  for (const y of years) {
-    const opt = document.createElement("option");
-    opt.value = y;
-    opt.textContent = y;
-    el.appendChild(opt);
-  }
-  el.value = defaultVal;
-}
-
-/* =========================
-   Username lock (simple)
-   - first time: user types username and hits Reload
-   - it locks and disables the input
-========================= */
-function initUsernameLockUI() {
+function initInputs() {
   const locked = localStorage.getItem(LS_LOCKED_USERNAME);
 
   if (locked) {
@@ -127,13 +117,15 @@ function initUsernameLockUI() {
     elUsername.disabled = false;
   }
 
-  // Populate dropdowns + set defaults
-  fillSelect(elSeason, LEAGUE_SEASON_YEARS, DEFAULT_LEAGUE_SEASON);
-  fillSelect(elStatsSeason, STATS_SEASON_YEARS, DEFAULT_STATS_SEASON);
+  // League season (default 2026)
+  const savedLeagueSeason = localStorage.getItem(LS_LEAGUE_SEASON);
+  state.leagueSeason = savedLeagueSeason || DEFAULT_LEAGUE_SEASON;
+  if (elSeason) elSeason.value = state.leagueSeason;
 
-  // Keep state in sync with UI defaults
-  state.season = elSeason.value || DEFAULT_LEAGUE_SEASON;
-  state.statsSeason = elStatsSeason.value || DEFAULT_STATS_SEASON;
+  // Stats season (default 2025)
+  const savedStatsSeason = localStorage.getItem(LS_STATS_SEASON);
+  state.statsSeason = savedStatsSeason || (elStatsSeason?.value || DEFAULT_STATS_SEASON);
+  if (elStatsSeason) elStatsSeason.value = state.statsSeason;
 }
 
 function lockUsername(username) {
@@ -169,7 +161,6 @@ function makeAvatarImg(ownerId, size = 22) {
   img.onerror = () => {
     img.style.display = "none";
   };
-
   return img;
 }
 
@@ -188,6 +179,7 @@ function ownerDisplayWithRecord(ownerId) {
 }
 
 function setRosterTitle(el, ownerId) {
+  if (!el) return;
   el.innerHTML = "";
 
   const span = document.createElement("span");
@@ -303,7 +295,7 @@ async function loadNFLState() {
 }
 
 function projectionEndpoint(playerId) {
-  const season = encodeURIComponent(String(state.season)); // projections tied to league season
+  const season = encodeURIComponent(String(state.leagueSeason));
   const week = encodeURIComponent(String(state.week || 1));
   return `https://api.sleeper.app/projections/${SPORT}/player/${playerId}?season=${season}&season_type=regular&week=${week}`;
 }
@@ -426,7 +418,6 @@ function ownerUserIdFromPickOwner(ownerField, mode) {
   if (!v) return null;
 
   if (mode === "user") return v;
-
   const roster = state.rosterByRosterId[v];
   return roster?.owner_id ? String(roster.owner_id) : null;
 }
@@ -542,6 +533,7 @@ function addDraftPicksSection(tbody, ownerId) {
 
 /* ===== Teams list ===== */
 function renderTeamsList() {
+  if (!elTeams) return;
   elTeams.innerHTML = "";
 
   const sortedRosters = [...state.rosters].sort((a, b) => {
@@ -664,7 +656,9 @@ function renderCompareTables() {
   const leftGroups = groupPlayers(leftRoster.players);
   const rightGroups = groupPlayers(rightRoster.players);
 
-  const positions = POS_ORDER.filter((p) => (leftGroups[p]?.length || 0) + (rightGroups[p]?.length || 0) > 0);
+  const positions = POS_ORDER.filter(
+    (p) => (leftGroups[p]?.length || 0) + (rightGroups[p]?.length || 0) > 0
+  );
 
   for (const pos of positions) {
     const L = leftGroups[pos] || [];
@@ -708,7 +702,12 @@ function renderCompareTables() {
           ])
         );
       } else {
-        leftTBody.appendChild(trRow([{ text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }], "emptyRow"));
+        leftTBody.appendChild(
+          trRow(
+            [{ text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }],
+            "emptyRow"
+          )
+        );
       }
 
       // RIGHT
@@ -744,16 +743,165 @@ function renderCompareTables() {
           ])
         );
       } else {
-        rightTBody.appendChild(trRow([{ text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }], "emptyRow"));
+        rightTBody.appendChild(
+          trRow(
+            [{ text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }],
+            "emptyRow"
+          )
+        );
       }
     }
 
-    leftTBody.appendChild(trRow([{ text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }], "sepRow"));
-    rightTBody.appendChild(trRow([{ text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }], "sepRow"));
+    leftTBody.appendChild(
+      trRow([{ text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }], "sepRow")
+    );
+    rightTBody.appendChild(
+      trRow([{ text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }], "sepRow")
+    );
   }
 
+  // Picks at bottom
   addDraftPicksSection(leftTBody, state.currentLeftOwnerId);
   addDraftPicksSection(rightTBody, state.currentRightOwnerId);
+}
+
+/* =========================
+   League Activity (Transactions)
+   Everything Sleeper allows:
+   - /transactions/{week}
+   - /matchups/{week} (optional, gives context for some activities)
+========================= */
+function rosterIdForOwner(ownerId) {
+  const r = state.rosterByOwner?.[String(ownerId)];
+  return r?.roster_id ? String(r.roster_id) : null;
+}
+
+function userNameFromRosterId(rosterId) {
+  const r = state.rosterByRosterId?.[String(rosterId)];
+  if (!r?.owner_id) return "";
+  return safeName(state.usersById?.[String(r.owner_id)]);
+}
+
+function playerName(pid) {
+  const p = state.playersById?.[String(pid)];
+  return p?.full_name || p?.first_name && p?.last_name ? `${p.first_name} ${p.last_name}` : String(pid);
+}
+
+function normalizeTxType(type) {
+  return String(type || "").toUpperCase();
+}
+
+function txLabel(tx) {
+  const type = normalizeTxType(tx?.type);
+  const status = String(tx?.status || "");
+  const adds = tx?.adds || {};
+  const drops = tx?.drops || {};
+  const rosterIds = tx?.roster_ids || [];
+  const creator = tx?.creator || null;
+
+  const who = creator ? userNameFromRosterId(creator) : (rosterIds[0] ? userNameFromRosterId(rosterIds[0]) : "");
+
+  const addNames = Object.keys(adds).map(playerName);
+  const dropNames = Object.keys(drops).map(playerName);
+
+  if (type === "WAIVER" || type === "FREE_AGENT") {
+    const verb = type === "WAIVER" ? "Waiver" : "FA";
+    const parts = [];
+    if (addNames.length) parts.push(`ADD ${addNames.join(", ")}`);
+    if (dropNames.length) parts.push(`DROP ${dropNames.join(", ")}`);
+    return `${who || "Team"} — ${verb}: ${parts.join(" | ")}`.trim();
+  }
+
+  if (type === "TRADE") {
+    // Sleeper trade object has "adds/drops" per roster sometimes; tx.roster_ids holds participants.
+    const teams = rosterIds.map((rid) => userNameFromRosterId(rid)).filter(Boolean);
+    return `${teams.join(" ⇄ ")} — Trade (${status})`;
+  }
+
+  if (type === "COMMISSIONER") {
+    return `${who || "Commissioner"} — Commissioner Action`;
+  }
+
+  // fallback
+  return `${who || "Team"} — ${type || "Activity"} (${status})`;
+}
+
+function formatTimestamp(ms) {
+  const n = Number(ms);
+  if (!Number.isFinite(n) || !n) return "";
+  const d = new Date(n);
+  return d.toLocaleString();
+}
+
+function clearActivityUI() {
+  if (!elActivityList) return;
+  elActivityList.innerHTML = "";
+}
+
+function renderActivity() {
+  if (!elActivityList) return;
+
+  clearActivityUI();
+
+  const items = Array.isArray(state.transactions) ? [...state.transactions] : [];
+  items.sort((a, b) => (Number(b?.created) || 0) - (Number(a?.created) || 0));
+
+  if (!items.length) {
+    const li = document.createElement("li");
+    li.className = "activityItem";
+    li.textContent = "No recent activity found.";
+    elActivityList.appendChild(li);
+    return;
+  }
+
+  for (const tx of items) {
+    const li = document.createElement("li");
+    li.className = "activityItem";
+
+    const top = document.createElement("div");
+    top.className = "activityTop";
+    top.textContent = txLabel(tx);
+
+    const sub = document.createElement("div");
+    sub.className = "activitySub";
+    sub.textContent = formatTimestamp(tx?.created);
+
+    li.appendChild(top);
+    li.appendChild(sub);
+
+    // OPTIONAL: detailed adds/drops lines for waiver/FA
+    const adds = tx?.adds || {};
+    const drops = tx?.drops || {};
+    const addNames = Object.keys(adds).map(playerName);
+    const dropNames = Object.keys(drops).map(playerName);
+
+    if (addNames.length || dropNames.length) {
+      const detail = document.createElement("div");
+      detail.className = "activityDetail";
+      const parts = [];
+      if (addNames.length) parts.push(`+ ${addNames.join(", ")}`);
+      if (dropNames.length) parts.push(`- ${dropNames.join(", ")}`);
+      detail.textContent = parts.join("   ");
+      li.appendChild(detail);
+    }
+
+    elActivityList.appendChild(li);
+  }
+}
+
+async function loadActivityForWeek(week) {
+  if (!state.leagueId) return;
+
+  try {
+    // Load transactions for the current week (Sleeper supports week-scoped endpoints)
+    const url = `https://api.sleeper.app/v1/league/${state.leagueId}/transactions/${encodeURIComponent(String(week || 1))}`;
+    const tx = await fetchJSON(url);
+    state.transactions = Array.isArray(tx) ? tx : [];
+  } catch (e) {
+    state.transactions = [];
+  }
+
+  renderActivity();
 }
 
 /* ===== Load leagues dropdown ===== */
@@ -762,9 +910,11 @@ async function loadLeagues() {
 
   state.username = locked ? locked : (elUsername.value || "").trim();
 
-  // league season & stats season come from dropdowns now
-  state.season = (elSeason?.value || "").trim() || DEFAULT_LEAGUE_SEASON;
+  // persist seasons
+  state.leagueSeason = (elSeason?.value || "").trim() || DEFAULT_LEAGUE_SEASON;
   state.statsSeason = (elStatsSeason?.value || "").trim() || DEFAULT_STATS_SEASON;
+  localStorage.setItem(LS_LEAGUE_SEASON, state.leagueSeason);
+  localStorage.setItem(LS_STATS_SEASON, state.statsSeason);
 
   if (!state.username) {
     setStatus("Enter a Sleeper username.");
@@ -781,7 +931,7 @@ async function loadLeagues() {
 
   setStatus("Loading leagues…");
   state.leagues = await fetchJSON(
-    `https://api.sleeper.app/v1/user/${state.user.user_id}/leagues/${SPORT}/${state.season}`
+    `https://api.sleeper.app/v1/user/${state.user.user_id}/leagues/${SPORT}/${encodeURIComponent(state.leagueSeason)}`
   );
 
   elLeagueSelect.innerHTML = "";
@@ -794,9 +944,15 @@ async function loadLeagues() {
     return;
   }
 
+  // Prefer last used league, else first, else "psycho"
   let auto = state.leagues[0].league_id;
-  const psycho = state.leagues.find((l) => (l.name || "").toLowerCase().includes("psycho"));
-  if (psycho) auto = psycho.league_id;
+  const savedLeagueId = localStorage.getItem(LS_LEAGUE_ID);
+  if (savedLeagueId && state.leagues.some((l) => String(l.league_id) === String(savedLeagueId))) {
+    auto = savedLeagueId;
+  } else {
+    const psycho = state.leagues.find((l) => (l.name || "").toLowerCase().includes("psycho"));
+    if (psycho) auto = psycho.league_id;
+  }
 
   state.leagues.forEach((l) => {
     const opt = document.createElement("option");
@@ -807,6 +963,7 @@ async function loadLeagues() {
 
   elLeagueSelect.value = auto;
   state.leagueId = auto;
+  localStorage.setItem(LS_LEAGUE_ID, String(auto));
 
   setStatus(`League list loaded ✅ — Week ${state.week || 1}`);
 }
@@ -815,6 +972,8 @@ async function loadLeagues() {
 async function loadLeagueData() {
   state.leagueId = elLeagueSelect.value;
   if (!state.leagueId) return;
+
+  localStorage.setItem(LS_LEAGUE_ID, String(state.leagueId));
 
   setStatus("Loading league…");
   state.league = await fetchJSON(`https://api.sleeper.app/v1/league/${state.leagueId}`);
@@ -861,11 +1020,14 @@ async function loadLeagueData() {
     state.playersById = await fetchJSON(`https://api.sleeper.app/v1/players/${SPORT}`);
   }
 
-  // IMPORTANT: stats load uses state.statsSeason (not league season)
+  // STATS SEASON (separate from league season)
+  state.statsSeason = (elStatsSeason?.value || "").trim() || DEFAULT_STATS_SEASON;
+  localStorage.setItem(LS_STATS_SEASON, state.statsSeason);
+
   setStatus(`Loading season stats (${state.statsSeason})…`);
   let statsRaw = null;
   try {
-    statsRaw = await fetchJSON(`https://api.sleeper.app/v1/stats/${SPORT}/regular/${state.statsSeason}`);
+    statsRaw = await fetchJSON(`https://api.sleeper.app/v1/stats/${SPORT}/regular/${encodeURIComponent(state.statsSeason)}`);
   } catch (e) {
     statsRaw = null;
   }
@@ -885,13 +1047,19 @@ async function loadLeagueData() {
 
   state.currentLeftOwnerId = null;
   state.currentRightOwnerId = null;
-  elLeftTitle.textContent = "Left Roster";
-  elRightTitle.textContent = "Right Roster";
+  if (elLeftTitle) elLeftTitle.textContent = "Left Roster";
+  if (elRightTitle) elRightTitle.textContent = "Right Roster";
 
   renderTeamsList();
   renderCompareTables();
 
-  setStatus(`Ready ✅ (Tap L / R on a team) — League ${state.season}, Stats ${state.statsSeason}, Week ${state.week || 1}`);
+  // Activity (transactions) - load for current week
+  if (elActivityList) {
+    setStatus("Loading activity…");
+    await loadActivityForWeek(state.week || 1);
+  }
+
+  setStatus(`Ready ✅ (Tap L / R on a team) — Week ${state.week || 1} — Stats ${state.statsSeason}`);
 }
 
 /* ===== Boot / reload wiring ===== */
@@ -905,17 +1073,43 @@ async function fullReload() {
   }
 }
 
-elReloadBtn.addEventListener("click", fullReload);
+if (elReloadBtn) elReloadBtn.addEventListener("click", fullReload);
 
-elLeagueSelect.addEventListener("change", async () => {
-  try {
-    await loadLeagueData();
-  } catch (err) {
-    console.error(err);
-    setStatus(`Error: ${err.message}`);
-  }
-});
+if (elLeagueSelect) {
+  elLeagueSelect.addEventListener("change", async () => {
+    try {
+      await loadLeagueData();
+    } catch (err) {
+      console.error(err);
+      setStatus(`Error: ${err.message}`);
+    }
+  });
+}
+
+// If user changes stats season, just reload league data (keeps same league, new stats)
+if (elStatsSeason) {
+  elStatsSeason.addEventListener("change", async () => {
+    try {
+      await loadLeagueData();
+    } catch (err) {
+      console.error(err);
+      setStatus(`Error: ${err.message}`);
+    }
+  });
+}
+
+// If user changes league season, reload leagues list first (then load selected league)
+if (elSeason) {
+  elSeason.addEventListener("change", async () => {
+    try {
+      await fullReload();
+    } catch (err) {
+      console.error(err);
+      setStatus(`Error: ${err.message}`);
+    }
+  });
+}
 
 // Boot
-initUsernameLockUI();
+initInputs();
 fullReload();
