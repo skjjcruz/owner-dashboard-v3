@@ -593,14 +593,20 @@ td.nfl{
 
 .activityBody{
   padding:10px;
-  max-height:240px;      /* makes it a nice box; tweak as needed */
-  overflow:auto;
+
+  /* scroll, no line limiting */
+  overflow-y:auto;
+  min-height:0;
+
+  /* choose ONE of these: */
+
+  /* Option A (recommended): fixed height box */
+  height:240px;
+
+  /* Option B: flexible up to a max (uncomment if you prefer) */
+  /* max-height:240px; */
 }
 
-.activityEmpty{
-  opacity:.7;
-  font-size:.95rem;
-}
 
 /* =========================
    Mobile: stack columns
