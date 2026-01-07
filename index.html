@@ -13,18 +13,16 @@
   <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.webmanifest">
 
-  <!-- Theme color (Android/Chrome, etc.) -->
+  <!-- Theme color -->
   <meta name="theme-color" content="#2563eb">
 
-  <!-- iOS PWA settings -->
+  <!-- iOS PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Owner Dash">
 
-  <!-- iOS app icon (use 180 for iOS best practice) -->
+  <!-- Icons -->
   <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
-
-  <!-- Favicons (nice for desktop tabs/bookmarks) -->
   <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16.png">
 </head>
@@ -41,12 +39,20 @@
 
       <label>
         League Season:
-        <input id="seasonInput" type="text" inputmode="numeric" />
+        <select id="seasonInput">
+          <option value="2024">2024</option>
+          <option value="2025">2025</option>
+          <option value="2026" selected>2026</option>
+        </select>
       </label>
 
       <label>
         Stats Season:
-        <input id="statsSeasonInput" type="text" inputmode="numeric" value="2025" />
+        <select id="statsSeasonInput">
+          <option value="2023">2023</option>
+          <option value="2024">2024</option>
+          <option value="2025" selected>2025</option>
+        </select>
       </label>
 
       <label>
@@ -57,79 +63,68 @@
       <button id="reloadBtn">Reload</button>
     </div>
 
-    <!-- Status moved to far right (same id, so JS stays intact) -->
     <div id="status" class="status">Ready</div>
   </div>
 
   <!-- ===== Main Layout ===== -->
   <div class="layout">
 
-    <!-- LEFT COLUMN (Teams + Activity) -->
-    <div class="leftColumn">
+    <!-- Teams / Owners -->
+    <aside class="teamsPane">
+      <div class="paneTitle">Teams</div>
+      <ul id="teams" class="teamsList"></ul>
 
-      <!-- Teams / Owners -->
-      <aside class="teamsPane">
-        <div class="paneTitle">Teams</div>
-        <ul id="teams" class="teamsList"></ul>
-      </aside>
-
-      <!-- Recent Activity / Transactions (NEW) -->
-      <section class="activityPane">
+      <!-- ===== Recent Activity ===== -->
+      <div class="activityPane">
         <div class="paneTitle">Recent Activity</div>
-        <div id="activity" class="activityBody">
-          <!-- Placeholder for now; JS can fill later -->
+        <div id="activityBody" class="activityBody">
           <div class="activityEmpty">No activity loaded.</div>
         </div>
-      </section>
+      </div>
+    </aside>
 
-    </div>
+    <!-- Left Roster -->
+    <section class="tablePane">
+      <div class="tableTitle" id="leftTitle">Left Roster</div>
+      <div class="tableScroll">
+        <table id="leftTable">
+          <thead>
+            <tr>
+              <th class="pos">Pos</th>
+              <th class="player">Player</th>
+              <th class="yrs">Yrs</th>
+              <th class="pts">Pts</th>
+              <th class="gp">GP</th>
+              <th class="avg">Avg</th>
+              <th class="nfl">PROJ</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
 
-    <!-- Right-side content (tables stay as-is) -->
-    <div class="tablesColumn">
+    <!-- Right Roster -->
+    <section class="tablePane">
+      <div class="tableTitle" id="rightTitle">Right Roster</div>
+      <div class="tableScroll">
+        <table id="rightTable">
+          <thead>
+            <tr>
+              <th class="pos">Pos</th>
+              <th class="player">Player</th>
+              <th class="yrs">Yrs</th>
+              <th class="pts">Pts</th>
+              <th class="gp">GP</th>
+              <th class="avg">Avg</th>
+              <th class="nfl">PROJ</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
 
-      <!-- Left Roster -->
-      <section class="tablePane">
-        <div class="tableTitle" id="leftTitle">Left Roster</div>
-        <div class="tableScroll">
-          <table id="leftTable">
-            <thead>
-              <tr>
-                <th class="pos">Pos</th>
-                <th class="player">Player</th>
-                <th class="yrs">Yrs</th>
-                <th class="pts">Pts</th>
-                <th class="gp">GP</th>
-                <th class="avg">Avg</th>
-                <th class="nfl">PROJ</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- Right Roster -->
-      <section class="tablePane">
-        <div class="tableTitle" id="rightTitle">Right Roster</div>
-        <div class="tableScroll">
-          <table id="rightTable">
-            <thead>
-              <tr>
-                <th class="pos">Pos</th>
-                <th class="player">Player</th>
-                <th class="yrs">Yrs</th>
-                <th class="pts">Pts</th>
-                <th class="gp">GP</th>
-                <th class="avg">Avg</th>
-                <th class="nfl">PROJ</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </section>
-
-    </div>
   </div>
 
   <!-- ===== Service Worker Registration ===== -->
