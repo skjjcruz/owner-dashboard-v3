@@ -726,7 +726,114 @@ td.nfl{
   /* Reduce vertical padding inside left pane cards */
   .teamsPaneInner {
     padding: 10px;
+  }/* =========================
+   iPhone / small screens
+========================= */
+@media (max-width: 520px) {
+
+  /* Layout becomes a single column */
+  .layout {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px;
   }
+
+  /* Top bar becomes stacked */
+  .topbar {
+    position: sticky; /* keeps it usable while scrolling */
+    top: 0;
+    z-index: 50;
+  }
+
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  .controls label {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+    font-size: 12px;
+  }
+
+  .controls input,
+  .controls select,
+  .controls button {
+    width: 100%;
+    font-size: 16px; /* prevents iOS zoom on focus */
+    padding: 10px 12px;
+    border-radius: 10px;
+    box-sizing: border-box;
+  }
+
+  #reloadBtn {
+    width: 100%;
+  }
+
+  /* Teams pane becomes normal section, not sidebar */
+  .teamsPane {
+    width: 100%;
+  }
+
+  /* Make Teams list more compact */
+  .teamsList .teamRow {
+    padding: 8px 10px;
+  }
+
+  /* Hide Right roster panel completely on phone */
+  .tablePane:nth-of-type(2) {
+    display: none;
+  }
+
+  /* Make remaining table fit */
+  .tablePane {
+    width: 100%;
+  }
+
+  .tableTitle {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  /* Table density */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  th, td {
+    padding: 6px 6px;
+  }
+
+  /* Tighten specific columns */
+  th.pos, td.pos { width: 42px; }
+  th.yrs, td.yrs { width: 34px; text-align: center; }
+  th.gp,  td.gp  { width: 34px; text-align: center; }
+
+  /* Hide least important columns on phone */
+  th.pts, td.pts,
+  th.avg, td.avg {
+    display: none;
+  }
+
+  /* Keep PROJ visible but tight */
+  th.nfl, td.nfl { width: 54px; text-align: right; }
+
+  /* Player column gets the space */
+  th.player, td.player {
+    width: auto;
+  }
+
+  /* Prevent weird horizontal scroll */
+  .tableScroll {
+    overflow-x: hidden;
+  }
+}
 
   .teamsList .teamRow {
     padding: 8px 10px;
