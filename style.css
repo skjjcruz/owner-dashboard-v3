@@ -659,4 +659,67 @@ td.nfl{
 /* Optional: tighten teams list height so activity is visible */
 .teamsList{
   flex: 1 1 auto;
+}/* ============================
+   iPhone / small screens
+   (does NOT affect iPad/desktop)
+============================ */
+@media (max-width: 768px) {
+
+  /* Top controls: wrap nicely */
+  .topbar {
+    position: sticky;  /* keeps controls available */
+    top: 0;
+    z-index: 10;
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  .controls label {
+    width: 100%;
+  }
+
+  .controls input,
+  .controls select,
+  .controls button {
+    width: 100%;
+  }
+
+  /* Main layout: stack panels vertically */
+  .layout {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 12px;
+  }
+
+  /* Make each pane full width */
+  .teamsPane,
+  .tablePane {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Tables: allow sideways scroll instead of crushing columns */
+  .tableScroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Keep roster columns readable */
+  #leftTable,
+  #rightTable {
+    min-width: 720px;
+  }
+
+  /* Optional: tighten spacing a bit */
+  .tableTitle,
+  .paneTitle,
+  .activityTitle {
+    font-size: 16px;
+  }
 }
