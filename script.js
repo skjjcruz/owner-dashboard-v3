@@ -758,12 +758,12 @@ function renderCompareTables() {
 async function loadLeagueActivity() {
   if (!state.leagueId) return;
 
-  elActivityList.innerHTML = "<li class='activityItem muted'>Loading…</li>";
+  elActivityList.innerHTML =
+    "<li class='activityItem muted'>Loading…</li>";
 
   try {
-    // Sleeper requires a "round" — 1 is fine for recent activity
     const txns = await fetchJSON(
-      `https://api.sleeper.app/v1/league/${state.leagueId}/transactions/1`
+      `https://api.sleeper.app/v1/league/${state.leagueId}/transactions/50`
     );
 
     elActivityList.innerHTML = "";
@@ -774,28 +774,28 @@ async function loadLeagueActivity() {
       return;
     }
 
-    txns
-      .slice(0, 10)
-      .forEach(tx => {
-        const li = document.createElement("li");
-        li.className = "activityItem";
+    txns.slice(0, 10).forEach(tx => {
+      const li = document.createElement("li");
+      li.className = "activityItem";
 
-        const type = tx.type.toUpperCase();
-        const time = new Date(tx.created).toLocaleString();
+      const type = tx.type.replace("_", " ");
+      const time = new Date(tx.created).toLocaleString();
 
-        li.innerHTML = `
-          <div class="activityType">${type}</div>
-          <div class="activityMeta">${time}</div>
-        `;
+      li.innerHTML = `
+        <div class="activityType">${type}</div>
+        <div class="activityMeta">${time}</div>
+      `;
 
-        elActivityList.appendChild(li);
-      });
+      elActivityList.appendChild(li);
+    });
 
-  } catch (e) {
+  } catch (err) {
+    console.error(err);
     elActivityList.innerHTML =
       "<li class='activityItem muted'>Failed to load activity</li>";
   }
 }
+
 /* ===== Load leagues dropdown ===== */
 async function loadLeagues() {
   const locked = localStorage.getItem(LS_LOCKED_USERNAME);
