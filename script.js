@@ -214,6 +214,11 @@ async function loadLeagueActivity() {
       li.className = "activityItem";
 
       const type = String(tx?.type || "transaction").replace(/_/g, " ");
+      const ownerId = tx.creator;
+const ownerName =
+  ownerId && state.usersById[ownerId]
+    ? ownerDisplayWithRecord(ownerId)
+    : "Unknown Owner";
       const time = tx?.created ? new Date(tx.created).toLocaleString() : "";
 
       const adds = tx?.adds && typeof tx.adds === "object" ? Object.keys(tx.adds) : [];
@@ -241,12 +246,13 @@ async function loadLeagueActivity() {
     : "(details unavailable)";
 
       li.innerHTML = `
-        <div class="activityType">${type}${who ? ` — ${who}` : ""}</div>
-        <div class="activityMeta">${details}</div>
-        <div class="activityMeta">${time}</div>
-      `;
-
-      elActivityList.appendChild(li);
+  <div class="activityType">${type}</div>
+  <div class="activityMeta">
+    <strong>${ownerName}</strong> ${details}
+  </div>
+  <div class="activityMeta">${time}</div>
+`;
+    elActivityList.appendChild(li);
     });
   } catch (err) {
     console.error(err);
