@@ -758,28 +758,38 @@ function renderCompareTables() {
 async function loadLeagueActivity() {
   if (!state.leagueId) return;
 
-  elActivityList.innerHTML =
-    "<li class='activityItem muted'>Loading…</li>";
+  elActivityList.innerHTML = "<li class='activityItem muted'>Loading…</li>";
 
   try {
-    const txns = await fetchJSON(
-      `https://api.sleeper.app/v1/league/${state.leagueId}/transactions/50`
-    );
+    const start = state.week || 1;
+    const roundsToCheck = [];
+    for (let r = start; r >= Math.max(1, start - 8); r--) roundsToCheck.push(r);
+
+    // fetch multiple rounds, combine
+    const results = [];
+    for (const r of roundsToCheck) {
+      const arr = await fetchJSON(
+        `https://api.sleeper.app/v1/league/${state.leagueId}/transactions/${r}`
+      );
+      if (Array.isArray(arr)) results.push(...arr);
+    }
+
+    // newest first
+    results.sort((a, b) => (b.created || 0) - (a.created || 0));
 
     elActivityList.innerHTML = "";
 
-    if (!txns.length) {
-      elActivityList.innerHTML =
-        "<li class='activityItem muted'>No recent activity</li>";
+    if (!results.length) {
+      elActivityList.innerHTML = "<li class='activityItem muted'>No recent activity</li>";
       return;
     }
 
-    txns.slice(0, 10).forEach(tx => {
+    results.slice(0, 15).forEach(tx => {
       const li = document.createElement("li");
       li.className = "activityItem";
 
-      const type = tx.type.replace("_", " ");
-      const time = new Date(tx.created).toLocaleString();
+      const type = (tx.type || "").replaceAll("_", " ");
+      const time = tx.created ? new Date(tx.created).toLocaleString() : "";
 
       li.innerHTML = `
         <div class="activityType">${type}</div>
@@ -791,8 +801,7 @@ async function loadLeagueActivity() {
 
   } catch (err) {
     console.error(err);
-    elActivityList.innerHTML =
-      "<li class='activityItem muted'>Failed to load activity</li>";
+    elActivityList.innerHTML = "<li class='activityItem muted'>Failed to load activity</li>";
   }
 }
 
