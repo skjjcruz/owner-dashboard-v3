@@ -876,6 +876,8 @@ async function loadLeagueData() {
   state.users = users;
   state.rosters = rosters;
 
+  await loadLeagueActivity();
+
   state.usersById = {};
   users.forEach((u) => {
     state.usersById[u.user_id] = u;
