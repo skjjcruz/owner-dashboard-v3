@@ -721,5 +721,35 @@ td.nfl{
   .paneTitle,
   .activityTitle {
     font-size: 16px;
+  }@media (max-width: 600px) {
+
+  /* Reduce vertical padding inside left pane cards */
+  .teamsPaneInner {
+    padding: 10px;
   }
+
+  .teamsList .teamRow {
+    padding: 8px 10px;
+  }
+
+  /* Keep team name from wrapping too much */
+  .teamsList .teamName {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Activity cards tighter */
+  .activityList .activityItem {
+    padding: 10px;
+    gap: 6px;
+  }
+
+  /* Optional: slightly smaller “Recent Activity” row text */
+  .activityType,
+  .activityMeta {
+    font-size: 13px;
+  }
+}
 }
