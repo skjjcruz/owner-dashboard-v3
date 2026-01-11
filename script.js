@@ -171,8 +171,11 @@ async function loadLeagueActivity() {
   elActivityList.innerHTML = "<li class='activityItem muted'>Loading…</li>";
 
   try {
-    // Transactions endpoint is keyed by "round" (week).
-    // We pull current week and a few prior weeks to guarantee we get something.
+    // Make sure we have player names available
+    if (!state.playersById) {
+      state.playersById = await fetchJSON(`https://api.sleeper.app/v1/players/${SPORT}`);
+    }
+
     const startWeek = Number(state.week || 1);
     const weeksToCheck = [];
     for (let w = startWeek; w >= Math.max(1, startWeek - 8); w--) weeksToCheck.push(w);
@@ -184,7 +187,6 @@ async function loadLeagueActivity() {
     }
 
     all.sort((a, b) => (b?.created || 0) - (a?.created || 0));
-
     elActivityList.innerHTML = "";
 
     if (!all.length) {
@@ -192,15 +194,51 @@ async function loadLeagueActivity() {
       return;
     }
 
-    all.slice(0, 10).forEach((tx) => {
+    // Helper: turn playerId into a readable name
+    const playerName = (pid) => {
+      const p = state.playersById?.[String(pid)];
+      if (!p) return `Unknown (${pid})`;
+      // For defenses, Sleeper sometimes has full_name like "New England Patriots"
+      return p.full_name || p.name || p.first_name || p.last_name || `Unknown (${pid})`;
+    };
+
+    // Helper: who made the move (best-effort)
+    const ownerLabelFromRosterId = (rosterId) => {
+      const r = state.rosterByRosterId?.[String(rosterId)];
+      if (!r) return "";
+      return ownerDisplayWithRecord(r.owner_id);
+    };
+
+    all.slice(0, 12).forEach((tx) => {
       const li = document.createElement("li");
       li.className = "activityItem";
 
       const type = String(tx?.type || "transaction").replace(/_/g, " ");
       const time = tx?.created ? new Date(tx.created).toLocaleString() : "";
 
+      const adds = tx?.adds && typeof tx.adds === "object" ? Object.keys(tx.adds) : [];
+      const drops = tx?.drops && typeof tx.drops === "object" ? Object.keys(tx.drops) : [];
+
+      // Determine the roster that initiated the add (common for free_agent/waivers)
+      const rosterIdForAdd = adds.length ? tx.adds[adds[0]] : null;
+      const who = rosterIdForAdd ? ownerLabelFromRosterId(rosterIdForAdd) : "";
+
+      const addedNames = adds.slice(0, 3).map(playerName);
+      const droppedNames = drops.slice(0, 3).map(playerName);
+
+      const addedText =
+        addedNames.length ? `Added ${addedNames.join(", ")}${adds.length > 3 ? "…" : ""}` : "";
+      const droppedText =
+        droppedNames.length ? `Dropped ${droppedNames.join(", ")}${drops.length > 3 ? "…" : ""}` : "";
+
+      const details =
+        addedText || droppedText
+          ? [addedText, droppedText].filter(Boolean).join(" • ")
+          : "(details unavailable)";
+
       li.innerHTML = `
-        <div class="activityType">${type}</div>
+        <div class="activityType">${type}${who ? ` — ${who}` : ""}</div>
+        <div class="activityMeta">${details}</div>
         <div class="activityMeta">${time}</div>
       `;
 
