@@ -751,10 +751,18 @@ function renderCompareTables() {
     leftTBody.appendChild(trRow([{ text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }], "sepRow"));
     rightTBody.appendChild(trRow([{ text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }], "sepRow"));
   }
+state.usersById = {};
+users.forEach((u) => { state.usersById[u.user_id] = u; });
 
-  addDraftPicksSection(leftTBody, state.currentLeftOwnerId);
-  addDraftPicksSection(rightTBody, state.currentRightOwnerId);
-}
+state.rosterByOwner = {};
+state.rosterByRosterId = {};
+rosters.forEach((r) => {
+  state.rosterByOwner[r.owner_id] = r;
+  state.rosterByRosterId[String(r.roster_id)] = r;
+});
+
+await loadLeagueActivity();
+
 async function loadLeagueActivity() {
   if (!state.leagueId) return;
 
