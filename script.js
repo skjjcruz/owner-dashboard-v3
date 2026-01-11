@@ -231,10 +231,14 @@ async function loadLeagueActivity() {
       const droppedText =
         droppedNames.length ? `Dropped ${droppedNames.join(", ")}${drops.length > 3 ? "…" : ""}` : "";
 
-      const details =
-        addedText || droppedText
-          ? [addedText, droppedText].filter(Boolean).join(" • ")
-          : "(details unavailable)";
+     const details =
+  addedText && droppedText
+    ? `➕ ${addedText} • ❌ ${droppedText}`
+    : addedText
+    ? `➕ ${addedText}`
+    : droppedText
+    ? `❌ ${droppedText}`
+    : "(details unavailable)";
 
       li.innerHTML = `
         <div class="activityType">${type}${who ? ` — ${who}` : ""}</div>
