@@ -751,67 +751,6 @@ function renderCompareTables() {
     leftTBody.appendChild(trRow([{ text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }], "sepRow"));
     rightTBody.appendChild(trRow([{ text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }, { text: "" }], "sepRow"));
   }
-state.usersById = {};
-users.forEach((u) => { state.usersById[u.user_id] = u; });
-
-state.rosterByOwner = {};
-state.rosterByRosterId = {};
-rosters.forEach((r) => {
-  state.rosterByOwner[r.owner_id] = r;
-  state.rosterByRosterId[String(r.roster_id)] = r;
-});
-
-await loadLeagueActivity();
-
-async function loadLeagueActivity() {
-  if (!state.leagueId) return;
-
-  elActivityList.innerHTML = "<li class='activityItem muted'>Loading…</li>";
-
-  try {
-    const start = state.week || 1;
-    const roundsToCheck = [];
-    for (let r = start; r >= Math.max(1, start - 8); r--) roundsToCheck.push(r);
-
-    // fetch multiple rounds, combine
-    const results = [];
-    for (const r of roundsToCheck) {
-      const arr = await fetchJSON(
-        `https://api.sleeper.app/v1/league/${state.leagueId}/transactions/${r}`
-      );
-      if (Array.isArray(arr)) results.push(...arr);
-    }
-
-    // newest first
-    results.sort((a, b) => (b.created || 0) - (a.created || 0));
-
-    elActivityList.innerHTML = "";
-
-    if (!results.length) {
-      elActivityList.innerHTML = "<li class='activityItem muted'>No recent activity</li>";
-      return;
-    }
-
-    results.slice(0, 15).forEach(tx => {
-      const li = document.createElement("li");
-      li.className = "activityItem";
-
-      const type = (tx.type || "").replaceAll("_", " ");
-      const time = tx.created ? new Date(tx.created).toLocaleString() : "";
-
-      li.innerHTML = `
-        <div class="activityType">${type}</div>
-        <div class="activityMeta">${time}</div>
-      `;
-
-      elActivityList.appendChild(li);
-    });
-
-  } catch (err) {
-    console.error(err);
-    elActivityList.innerHTML = "<li class='activityItem muted'>Failed to load activity</li>";
-  }
-}
 
 /* ===== Load leagues dropdown ===== */
 async function loadLeagues() {
