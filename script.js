@@ -978,6 +978,48 @@ elLeagueSelect.addEventListener("change", async () => {
 // DOM hooks
 const elActivityList = document.getElementById("activityList");
 
+// ===== League Activity =====
+async function loadLeagueActivity() {
+  if (!state.leagueId || !elActivityList) return;
+
+  elActivityList.innerHTML =
+    "<li class='activityItem muted'>Loading…</li>";
+
+  try {
+    const txns = await fetchJSON(
+      `https://api.sleeper.app/v1/league/${state.leagueId}/transactions/50`
+    );
+
+    elActivityList.innerHTML = "";
+
+    if (!Array.isArray(txns) || txns.length === 0) {
+      elActivityList.innerHTML =
+        "<li class='activityItem muted'>No recent activity</li>";
+      return;
+    }
+
+    txns.slice(0, 10).forEach(tx => {
+      const li = document.createElement("li");
+      li.className = "activityItem";
+
+      const type = tx.type.replace(/_/g, " ");
+      const time = new Date(tx.created).toLocaleString();
+
+      li.innerHTML = `
+        <div class="activityType">${type}</div>
+        <div class="activityMeta">${time}</div>
+      `;
+
+      elActivityList.appendChild(li);
+    });
+
+  } catch (err) {
+    console.error(err);
+    elActivityList.innerHTML =
+      "<li class='activityItem muted'>Failed to load activity</li>";
+  }
+}
+  
 // Boot
 initUsernameLockUI();
 fullReload();
