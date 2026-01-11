@@ -889,11 +889,9 @@ async function loadLeagueData() {
     fetchJSON(`https://api.sleeper.app/v1/league/${state.leagueId}/users`),
     fetchJSON(`https://api.sleeper.app/v1/league/${state.leagueId}/rosters`),
   ]);
-
+await loadLeagueActivity();
   state.users = users;
   state.rosters = rosters;
-
-  await loadLeagueActivity();
 
   state.usersById = {};
   users.forEach((u) => {
