@@ -513,4 +513,150 @@ td.nfl{
 .activityItem.muted{
   color: #6b7280;
   text-align: center;
+}/* =========================
+   Sleeper-like League Activity (v1)
+   Paste at VERY BOTTOM of style.css
+========================= */
+
+.activityPane{
+  margin-top: 14px;
+  background: #111827;
+  border: 1px solid #1f2937;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  box-shadow:
+    0 0 0 1px rgba(212,175,55,0.05),
+    0 10px 30px rgba(0,0,0,0.4);
+}
+
+.activityTitle{
+  padding: 12px;
+  font-weight: 800;
+  background: #0f172a;
+  color: #d4af37;
+  border-bottom: 1px solid #1f2937;
+}
+
+.activityList{
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.activityItem{
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #1f2937;
+  align-items: center;
+}
+
+.activityItem:last-child{
+  border-bottom: none;
+}
+
+.activityAvatar{
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 1px solid #243244;
+  flex: 0 0 auto;
+  background: #0f172a;
+}
+
+.activityBody{
+  min-width: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.activityTop{
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.activityOwner{
+  color: #e5e7eb;
+  font-weight: 800;
+  font-size: 12px;
+  max-width: 170px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activityType{
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: .02em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid #1f2937;
+  background: #0f172a;
+  color: #d4af37;
+}
+
+.activityType.drop{ color: #fecaca; border-color: #3f1d1d; background:#1b0f12; }
+.activityType.add{  color: #bbf7d0; border-color: #123b2a; background:#0b1a14; }
+.activityType.trade{color: #e0e7ff; border-color: #2a2f6b; background:#10143a; }
+.activityType.waiver{color:#fde68a; border-color:#3b2f0b; background:#1a1507; }
+
+.activityPlayer{
+  color: #e5e7eb;
+  font-weight: 800;
+  font-size: 13px;
+  line-height: 1.15;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activityMeta{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+.activityPos{
+  font-weight: 900;
+  color: #d4af37;
+}
+
+.activityTime{
+  margin-left: auto;
+  color: #6b7280;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+/* Make sure left column can show Teams + Activity */
+.teamsPane{
+  overflow: hidden;
+}
+
+.teamsPaneInner{
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Optional: tighten teams list height so activity is visible */
+.teamsList{
+  flex: 1 1 auto;
 }
