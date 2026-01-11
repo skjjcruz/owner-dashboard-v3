@@ -478,4 +478,39 @@ td.pos{
 /* Muted NFL / misc text */
 td.nfl{
   color: #9ca3af;
+}/* ===== League Activity ===== */
+.activityPane{
+  border-top: 1px solid #1f2937;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.activityList{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.activityItem{
+  padding: 8px 10px;
+  border-bottom: 1px solid #1f2937;
+  font-size: 12px;
+}
+
+.activityType{
+  font-weight: 700;
+  color: #d4af37;
+}
+
+.activityMeta{
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.activityItem.muted{
+  color: #6b7280;
+  text-align: center;
 }
