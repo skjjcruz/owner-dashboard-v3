@@ -1,1 +1,481 @@
+/* =========================================
+   Fantasy Football Owner Dashboard – style.css
+   FINAL STABLE VERSION
+========================================= */
 
+:root{
+  --bg:#f5f7fb;
+  --card:#ffffff;
+  --line:#e5e7eb;
+  --muted:#6b7280;
+  --text:#111827;
+
+  --blue:#2563eb;
+
+  --sep:#d9dde5;
+
+  --ir:#ff6b6b;
+  --rookie:#cfefff;
+  --taxi:#e6d7ff;
+  --starter:#d1fae5;   /* STARTER GREEN */
+
+  --shadow: 0 1px 3px rgba(0,0,0,.08);
+
+  --teams-w: 320px;
+}
+
+*{ box-sizing:border-box; }
+html, body{ height:100%; }
+
+body{
+  margin:0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ===== Top bar ===== */
+.topbar{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  padding: 10px 12px;
+}
+
+.controls{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 14px;
+  align-items:center;
+}
+
+.controls label{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  font-size:14px;
+  color: var(--muted);
+}
+
+.controls input,
+.controls select{
+  height: 34px;
+  padding: 6px 10px;
+  border: 1px solid #d7dbe3;
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text);
+  font-size: 14px;
+  min-width: 130px;
+}
+
+#reloadBtn{
+  height: 34px;
+  padding: 0 14px;
+  border: none;
+  background: var(--blue);
+  color: #fff;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.status{
+  margin-top: 6px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+/* ===== Layout ===== */
+.layout{
+  padding: 12px;
+  display: grid;
+  grid-template-columns: var(--teams-w) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px;
+  min-height: 0;
+}
+
+/* ===== Cards ===== */
+.teamsPane,
+.tablePane{
+  background: var(--card);
+  border-radius: 14px;
+  box-shadow:
+  0 0 0 1px rgba(212,175,55,0.05),
+  0 10px 30px rgba(0,0,0,0.4);
+  border: 1px solid #e7eaf0;
+  overflow: hidden;
+  display:flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.paneTitle,
+.tableTitle{
+  padding: 12px;
+  font-weight: 800;
+  border-bottom: 1px solid #eceff5;
+  background: #fafbfe;
+}
+
+/* ===== Teams List ===== */
+.teamsList{
+  list-style:none;
+  margin:0;
+  padding:0;
+  overflow:auto;
+  -webkit-overflow-scrolling: touch;
+  min-height: 0;
+}
+
+.teamsList li{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border-bottom: 1px solid #eef1f6;
+}
+
+.teamName{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  min-width:0;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.teamName span{
+  overflow:hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.teamAvatar{
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #e3e6ee;
+}
+
+.teamButtons{
+  display:flex;
+  gap: 6px;
+}
+
+.btn{
+  width: 30px;
+  height: 26px;
+  border-radius: 8px;
+  border: 1px solid #d7dbe3;
+  background: #f7f8fb;
+  color: #2f6fed;
+  font-weight: 800;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.btn:active{ transform: translateY(1px); }
+
+/* ===== Tables ===== */
+.tableScroll{
+  overflow:auto;
+  -webkit-overflow-scrolling: touch;
+  min-height: 0;
+}
+
+table{
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  table-layout: fixed;
+  min-width: 0;
+}
+
+thead th{
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #eef1f6;
+  border-bottom: 1px solid #d7dbe3;
+  padding: 10px;
+  font-size: 12px;
+  color: #374151;
+  text-align: left;
+}
+
+tbody td{
+  padding: 10px;
+  font-size: 13px;
+  border: none;
+  vertical-align: middle;
+}
+
+tbody tr:hover td{
+  background: #fafcff;
+}
+
+/* ===== Column sizing ===== */
+th.pos, td.pos   { width: 52px; text-align:center; font-weight: 800; }
+th.player, td.player{ width:auto; overflow:hidden; white-space:nowrap; }
+th.yrs, td.yrs   { width: 46px; text-align:right; }
+th.pts, td.pts   { width: 76px; text-align:right; }
+th.gp,  td.gp    { width: 52px; text-align:right; }
+th.avg, td.avg   { width: 64px; text-align:right; }
+th.nfl, td.nfl   { width: 56px; text-align:right; color: var(--muted); }
+
+/* ===== POS cell ===== */
+td.pos{
+  background: #fff3a0;
+}
+
+/* ===== Group headers / separators ===== */
+.groupRow td{
+  background: #f0f2f5;
+  font-weight: 900;
+}
+
+.sepRow td{
+  background: var(--sep);
+  height: 10px;
+  padding: 0;
+}
+
+/* ===== STATUS COLORING ===== */
+#leftTable td.player.psStarter,
+#rightTable td.player.psStarter{
+  background: var(--starter);
+  font-weight: 700;
+}
+
+#leftTable td.player.psIR,
+#rightTable td.player.psIR{
+  background: var(--ir);
+}
+
+#leftTable td.player.psTaxi,
+#rightTable td.player.psTaxi{
+  background: var(--taxi);
+}
+
+#leftTable td.player.psRookie,
+#rightTable td.player.psRookie{
+  background: var(--rookie);
+}
+
+/* ===== Square cells (hard override) ===== */
+#leftTable td, #leftTable th,
+#rightTable td, #rightTable th,
+#leftTable td *, #rightTable td *{
+  border-radius: 0 !important;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 980px){
+  .layout{ grid-template-columns: 1fr; }
+  :root{ --teams-w: 100%; }
+}
+/* =========================
+   LOCK SCROLL: vertical only
+   Paste at VERY BOTTOM
+========================= */
+
+/* Stop page-level sideways drift */
+html, body{
+  overflow-x: hidden;
+}
+
+/* Only vertical scroll inside the panes */
+.tableScroll{
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  touch-action: pan-y;                 /* vertical only */
+  -webkit-overflow-scrolling: touch;
+}
+
+.teamsList{
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  touch-action: pan-y;                 /* vertical only */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Make the table fit the pane (no sideways scroll needed) */
+#leftTable, #rightTable{
+  width: 100%;
+  min-width: 0 !important;
+  table-layout: fixed;
+}
+
+/* Prevent a long name from forcing horizontal scroll */
+#leftTable td.player, #rightTable td.player{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* =========================
+   SCROLL FIX (iPad / Safari)
+   Paste at VERY BOTTOM
+========================= */
+
+html, body { height: 100%; }
+
+body{
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Make the main 3-column area fill the remaining screen below the topbar */
+.layout{
+  flex: 1 1 auto;
+  min-height: 0;                 /* REQUIRED for iOS inner scrolling */
+  height: calc(100svh - 92px);   /* adjust 92px if your topbar height changes */
+}
+
+/* Cards must allow inner scrolling containers to shrink */
+.teamsPane,
+.tablePane{
+  min-height: 0;
+}
+
+/* The actual scrolling containers */
+.teamsList,
+.tableScroll{
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}/* =========================================
+   WAR ROOM THEME – DARK MODE OVERRIDE
+   SAFE ADDITIVE LAYER (v1)
+========================================= */
+
+/* App background */
+body{
+  background: #0b0f14;
+  color: #e5e7eb;
+}
+
+/* Top bar */
+.topbar{
+  background: #0f172a;
+  border-bottom: 1px solid #1f2937;
+}
+
+/* Controls */
+.controls label{
+  color: #9ca3af;
+}
+
+.controls input,
+.controls select{
+  background: #111827;
+  border: 1px solid #1f2937;
+  color: #e5e7eb;
+}
+
+#reloadBtn{
+  background: #d4af37;
+  color: #111;
+}
+
+#reloadBtn:hover{
+  background: #b8962e;
+}
+
+/* Cards */
+.teamsPane,
+.tablePane{
+  background: #111827;
+  border: 1px solid #1f2937;
+}
+
+/* Pane headers */
+.paneTitle,
+.tableTitle{
+  background: #0f172a;
+  color: #d4af37;
+  border-bottom: 1px solid #1f2937;
+}
+
+/* Teams list rows */
+.teamsList li{
+  border-bottom: 1px solid #1f2937;
+}
+
+.teamName{
+  color: #e5e7eb;
+}
+
+/* Buttons */
+.btn{
+  background: #0f172a;
+  border: 1px solid #1f2937;
+  color: #d4af37;
+}
+
+/* Tables */
+thead th{
+  background: #0f172a;
+  color: #d4af37;
+  border-bottom: 1px solid #1f2937;
+}
+
+tbody tr:hover td{
+  background: #0b1220;
+}
+
+/* POS column */
+td.pos{
+  background: #3b2f0b;   /* muted gold */
+  color: #fff;
+}
+
+/* Group headers */
+.groupRow td{
+  background: #0f172a;
+  color: #d4af37;
+}
+
+/* Separator bars */
+.sepRow td{
+  background: #1f2937;
+}
+
+/* Status colors – tuned for dark */
+#leftTable td.player.psStarter,
+#rightTable td.player.psStarter{
+  background: #064e3b;
+  color: #ecfdf5;
+}
+
+#leftTable td.player.psIR,
+#rightTable td.player.psIR{
+  background: #7f1d1d;
+  color: #fee2e2;
+}
+
+#leftTable td.player.psTaxi,
+#rightTable td.player.psTaxi{
+  background: #312e81;
+  color: #e0e7ff;
+}
+
+#leftTable td.player.psRookie,
+#rightTable td.player.psRookie{
+  background: #0c4a6e;
+  color: #e0f2fe;
+}
+
+/* Muted NFL / misc text */
+td.nfl{
+  color: #9ca3af;
+}
