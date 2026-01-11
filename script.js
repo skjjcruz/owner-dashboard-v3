@@ -755,7 +755,47 @@ function renderCompareTables() {
   addDraftPicksSection(leftTBody, state.currentLeftOwnerId);
   addDraftPicksSection(rightTBody, state.currentRightOwnerId);
 }
+async function loadLeagueActivity() {
+  if (!state.leagueId) return;
 
+  elActivityList.innerHTML = "<li class='activityItem muted'>Loading…</li>";
+
+  try {
+    // Sleeper requires a "round" — 1 is fine for recent activity
+    const txns = await fetchJSON(
+      `https://api.sleeper.app/v1/league/${state.leagueId}/transactions/1`
+    );
+
+    elActivityList.innerHTML = "";
+
+    if (!txns.length) {
+      elActivityList.innerHTML =
+        "<li class='activityItem muted'>No recent activity</li>";
+      return;
+    }
+
+    txns
+      .slice(0, 10)
+      .forEach(tx => {
+        const li = document.createElement("li");
+        li.className = "activityItem";
+
+        const type = tx.type.toUpperCase();
+        const time = new Date(tx.created).toLocaleString();
+
+        li.innerHTML = `
+          <div class="activityType">${type}</div>
+          <div class="activityMeta">${time}</div>
+        `;
+
+        elActivityList.appendChild(li);
+      });
+
+  } catch (e) {
+    elActivityList.innerHTML =
+      "<li class='activityItem muted'>Failed to load activity</li>";
+  }
+}
 /* ===== Load leagues dropdown ===== */
 async function loadLeagues() {
   const locked = localStorage.getItem(LS_LOCKED_USERNAME);
@@ -916,6 +956,13 @@ elLeagueSelect.addEventListener("change", async () => {
   }
 });
 
+// DOM hooks
+const elActivityList = document.getElementById("activityList");
+
 // Boot
 initUsernameLockUI();
 fullReload();
+
+
+
+
