@@ -1,3 +1,25 @@
+// ===== BOOT DIAGNOSTICS (leave this in until it's stable) =====
+(function bootDiagnostics() {
+  const stamp = new Date().toLocaleTimeString();
+  const banner = document.createElement("div");
+  banner.id = "jsBootBanner";
+  banner.style.cssText = "position:sticky;top:0;z-index:9999;background:#7c2d12;color:#fff;padding:6px 10px;font:12px -apple-system;border-bottom:1px solid #000;";
+  banner.textContent = `JS LOADED ✅ ${stamp}`;
+  document.addEventListener("DOMContentLoaded", () => document.body.prepend(banner));
+
+  window.addEventListener("error", (e) => {
+    const msg = `JS ERROR ❌ ${e.message}`;
+    banner.textContent = msg;
+    console.error(e.error || e.message);
+  });
+  window.addEventListener("unhandledrejection", (e) => {
+    const msg = `PROMISE ERROR ❌ ${String(e.reason?.message || e.reason)}`;
+    banner.textContent = msg;
+    console.error(e.reason);
+  });
+})();
+
+
 /*************************************************
  * Owner Dashboard – Sleeper Compare + Stats + Picks + Weekly Projections
  * (STABLE TABLE VERSION)
