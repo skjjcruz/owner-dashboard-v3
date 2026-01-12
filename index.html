@@ -2,27 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Owner Dashboard</title>
 
-  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
-<body>
 
-  <!-- TOP BAR -->
-  <div class="topbar">
+<body>
+  <header class="topbar">
     <div class="controls">
-      <label>Username: <input id="usernameInput" placeholder="skjjcruz" /></label>
-      <label>League Season: <select id="seasonInput"></select></label>
-      <label>Stats Season: <select id="statsSeasonInput"></select></label>
-      <label>League: <select id="leagueSelect"></select></label>
+      <label>Username:
+        <input id="usernameInput" type="text" placeholder="skjjcruz" />
+      </label>
+
+      <label>League Season:
+        <select id="seasonInput"></select>
+      </label>
+
+      <label>Stats Season:
+        <select id="statsSeasonInput"></select>
+      </label>
+
+      <label>League:
+        <select id="leagueSelect"></select>
+      </label>
+
       <button id="reloadBtn">Reload</button>
     </div>
-    <div id="status" class="status"></div>
-  </div>
 
-  <!-- MAIN -->
-  <div class="layout">
+    <div id="status" class="status"></div>
+  </header>
+
+  <main class="layout">
+    <!-- Teams + Activity -->
     <section class="teamsPane">
       <div class="paneTitle">Teams</div>
       <ul id="teams" class="teamsList"></ul>
@@ -33,6 +45,7 @@
       </div>
     </section>
 
+    <!-- Left -->
     <section class="tablePane">
       <div id="leftTitle" class="tableTitle">Left Roster</div>
       <div class="tableScroll">
@@ -53,6 +66,7 @@
       </div>
     </section>
 
+    <!-- Right -->
     <section class="tablePane">
       <div id="rightTitle" class="tableTitle">Right Roster</div>
       <div class="tableScroll">
@@ -72,8 +86,9 @@
         </table>
       </div>
     </section>
-  </div>
+  </main>
 
-  <script src="./app.js" defer></script>
+  <!-- IMPORTANT: defer so DOM exists before JS runs -->
+  <script src="app.js" defer></script>
 </body>
 </html>
