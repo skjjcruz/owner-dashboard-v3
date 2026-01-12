@@ -384,4 +384,172 @@ html, body{ overflow-x: hidden; }
   th.nfl, td.nfl{ width: 56px; }
 
   td.player{ white-space: nowrap; }
+}/* =========================================================
+   iPhone "Sleeper-style" player cards (CSS-only)
+   Paste at VERY BOTTOM of style.css
+========================================================= */
+@media (max-width: 520px){
+
+  /* Stack panes (teams, left, right) */
+  .layout{
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    padding: 10px !important;
+  }
+
+  /* Make controls not cause zoom + fit */
+  .controls{
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  .controls label{
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+    font-size: 12px !important;
+  }
+  .controls input,
+  .controls select,
+  #reloadBtn{
+    width: 100% !important;
+    font-size: 16px !important; /* iOS zoom prevention */
+    padding: 10px 12px !important;
+    min-width: 0 !important;
+  }
+
+  /* ---------- TABLE → CARD FEED ---------- */
+
+  /* Hide header row on phone */
+  #leftTable thead,
+  #rightTable thead{
+    display: none !important;
+  }
+
+  /* Make table elements behave like a list */
+  #leftTable, #rightTable,
+  #leftTable tbody, #rightTable tbody{
+    display: block !important;
+    width: 100% !important;
+  }
+
+  /* Keep group headers readable */
+  #leftTable tr.groupRow,
+  #rightTable tr.groupRow{
+    display: block !important;
+  }
+  #leftTable tr.groupRow td,
+  #rightTable tr.groupRow td{
+    display: block !important;
+    padding: 10px 12px !important;
+  }
+
+  /* Separator rows become small spacers */
+  #leftTable tr.sepRow,
+  #rightTable tr.sepRow{
+    display: block !important;
+  }
+  #leftTable tr.sepRow td,
+  #rightTable tr.sepRow td{
+    display: block !important;
+    height: 10px !important;
+    padding: 0 !important;
+  }
+
+  /* Hide empty filler rows on phone */
+  #leftTable tr.emptyRow,
+  #rightTable tr.emptyRow{
+    display: none !important;
+  }
+
+  /* Every normal player row becomes a “Sleeper card” */
+  #leftTable tbody tr:not(.groupRow):not(.sepRow):not(.emptyRow),
+  #rightTable tbody tr:not(.groupRow):not(.sepRow):not(.emptyRow){
+    display: grid !important;
+    grid-template-columns: 52px 1fr 56px;  /* POS | body | PROJ */
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "pos name proj"
+      "pos meta proj";
+    gap: 2px 10px;
+    padding: 10px 10px !important;
+    border-bottom: 1px solid #1f2937 !important;
+    align-items: center;
+    background: #0f172a;          /* card bg */
+  }
+
+  /* Position badge (left) */
+  #leftTable td.pos, #rightTable td.pos{
+    grid-area: pos;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    border-radius: 10px !important;
+    font-weight: 900 !important;
+    font-size: 12px !important;
+    background: #3b2f0b !important;
+    color: #fff !important;
+  }
+
+  /* Player name (top middle) */
+  #leftTable td.player, #rightTable td.player{
+    grid-area: name;
+    display: block !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    font-weight: 900 !important;
+    font-size: 15px !important;
+    line-height: 1.15 !important;
+    border-radius: 10px !important;
+    padding: 6px 8px !important;
+    background: transparent !important; /* status colors still show if applied */
+  }
+
+  /* PROJ (right side) */
+  #leftTable td.nfl, #rightTable td.nfl{
+    grid-area: proj;
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-end;
+    font-weight: 900 !important;
+    font-size: 14px !important;
+    color: #d4af37 !important;
+    white-space: nowrap !important;
+  }
+
+  /* Stats line (bottom middle): Yrs / Pts / GP / Avg */
+  #leftTable td.yrs,
+  #leftTable td.pts,
+  #leftTable td.gp,
+  #leftTable td.avg,
+  #rightTable td.yrs,
+  #rightTable td.pts,
+  #rightTable td.gp,
+  #rightTable td.avg{
+    grid-area: meta;
+    display: inline-flex !important;
+    gap: 6px;
+    align-items: baseline;
+    font-size: 12px !important;
+    color: #9ca3af !important;
+    padding: 0 !important;
+    margin-right: 10px;
+    background: transparent !important;
+  }
+
+  /* Turn each stat cell into “Label Value” */
+  #leftTable td.yrs::before,  #rightTable td.yrs::before { content: "Yrs "; opacity: .75; }
+  #leftTable td.pts::before,  #rightTable td.pts::before { content: "Pts "; opacity: .75; }
+  #leftTable td.gp::before,   #rightTable td.gp::before  { content: "GP ";  opacity: .75; }
+  #leftTable td.avg::before,  #rightTable td.avg::before { content: "Avg "; opacity: .75; }
+
+  /* Because the meta cells are separate <td>s, ensure they flow on one line */
+  #leftTable tbody tr:not(.groupRow):not(.sepRow):not(.emptyRow),
+  #rightTable tbody tr:not(.groupRow):not(.sepRow):not(.emptyRow){
+    position: relative;
+  }
+  #leftTable td.yrs, #rightTable td.yrs{ margin-left: 0; }
 }
