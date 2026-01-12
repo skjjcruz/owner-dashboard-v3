@@ -804,15 +804,194 @@ function fantasyProsUrl(playerObj) {
 
   return `https://www.fantasypros.com/nfl/players/${slug}.php`;
 }
+function isPhoneMatchView() {
+  return window.matchMedia && window.matchMedia("(max-width: 520px)").matches;
+}
+
+function shortDisplayName(playerObj) {
+  const full = (playerObj?.full_name || "").trim();
+  if (!full) return "";
+  // DEF / team names: keep as-is
+  if (playerObj?.position === "DEF" || full.split(" ").length <= 1) return full;
+  const parts = full.split(/\s+/);
+  const first = parts[0];
+  const last = parts[parts.length - 1];
+  return `${first[0]}. ${last}`;
+}
+
+function ensureMobileComparePane() {
+  let pane = document.querySelector(".mobileComparePane");
+  if (pane) return pane;
+
+  const layout = document.querySelector(".layout");
+  if (!layout) return null;
+
+  pane = document.createElement("section");
+  pane.className = "mobileComparePane";
+  pane.innerHTML = `
+    <div class="mobileCompareHeader">
+      <div class="title" id="mTitle">Compare</div>
+      <div class="sub" id="mSub">Pick a Left and Right team</div>
+    </div>
+    <div id="mobileCompareBody"></div>
+  `;
+  layout.appendChild(pane);
+  return pane;
+}
+function renderMobileCompare() {
+  const pane = ensureMobileComparePane();
+  if (!pane) return;
+
+  const body = document.getElementById("mobileCompareBody");
+  const mTitle = document.getElementById("mTitle");
+  const mSub = document.getElementById("mSub");
+
+  if (!body) return;
+  body.innerHTML = "";
+
+  const leftRoster = state.currentLeftOwnerId ? state.rosterByOwner[state.currentLeftOwnerId] : null;
+  const rightRoster = state.currentRightOwnerId ? state.rosterByOwner[state.currentRightOwnerId] : null;
+
+  if (!leftRoster || !rightRoster) {
+    mTitle.textContent = "Compare";
+    mSub.textContent = "Pick a Left and Right team";
+    return;
+  }
+
+  mTitle.textContent = `${ownerDisplayWithRecord(state.currentLeftOwnerId)}  vs  ${ownerDisplayWithRecord(state.currentRightOwnerId)}`;
+  mSub.textContent = `Week ${state.week || 1} • Stats ${state.statsSeason}`;
+
+  const leftGroups = groupPlayers(leftRoster.players);
+  const rightGroups = groupPlayers(rightRoster.players);
+
+  const positions = POS_ORDER.filter((p) => (leftGroups[p]?.length || 0) + (rightGroups[p]?.length || 0) > 0);
+
+  for (const pos of positions) {
+    const L = leftGroups[pos] || [];
+    const R = rightGroups[pos] || [];
+    const max = Math.max(L.length, R.length);
+
+    const block = document.createElement("div");
+    block.className = "posBlock";
+    block.innerHTML = `
+      <div class="posBlockHeader">
+        <div>${pos}</div>
+        <div class="count">(${L.length} / ${R.length})</div>
+      </div>
+    `;
+
+    for (let i = 0; i < max; i++) {
+      const row = document.createElement("div");
+      row.className = "pairRow";
+
+      row.appendChild(buildPhonePlayerCard(L[i], leftRoster, pos));
+      row.appendChild(buildPhonePlayerCard(R[i], rightRoster, pos));
+
+      block.appendChild(row);
+    }
+
+    body.appendChild(block);
+  }
+
+  // Draft picks (same as iPad, just at bottom)
+  const picksWrap = document.createElement("div");
+  picksWrap.className = "posBlock";
+  picksWrap.innerHTML = `<div class="posBlockHeader"><div>DRAFT PICKS</div><div class="count"></div></div>`;
+
+  const maxPickRows = Math.max(
+    (state.picksByOwnerId?.[String(state.currentLeftOwnerId)] || []).length,
+    (state.picksByOwnerId?.[String(state.currentRightOwnerId)] || []).length
+  );
+
+  for (let i = 0; i < maxPickRows; i++) {
+    const row = document.createElement("div");
+    row.className = "pairRow";
+
+    row.appendChild(buildPhonePickCard(state.currentLeftOwnerId, i));
+    row.appendChild(buildPhonePickCard(state.currentRightOwnerId, i));
+
+    picksWrap.appendChild(row);
+  }
+
+  body.appendChild(picksWrap);
+}
+
+function buildPhonePlayerCard(p, roster, posLabel) {
+  const card = document.createElement("div");
+  card.className = "pCard";
+
+  if (!p) {
+    card.classList.add("empty");
+    card.innerHTML = `<div class="pTop"><div class="pName">—</div><div class="pProj"></div></div>`;
+    return card;
+  }
+
+  const stats = state.statsByPlayerId?.[p.player_id] || null;
+  const gp = gamesPlayed(stats);
+  const pts = fantasyPointsFromScoring(stats, state.scoring);
+  const avg = gp ? pts / gp : 0;
+
+  const proj = getProjectionPoints(p);
+  const status = playerStatusClass(roster, p);
+  if (status) card.classList.add(status);
+
+  card.innerHTML = `
+    <div class="badgePos">${p.position || posLabel || ""}</div>
+    <div class="pTop">
+      <div class="pName">${shortDisplayName(p)}</div>
+      <div class="pProj">${proj}</div>
+    </div>
+    <div class="pMeta">
+      <span>Yrs ${yearsInLeague(p) || ""}</span>
+      <span>Pts ${pts ? format1(pts) : ""}</span>
+      <span>GP ${gp || ""}</span>
+      <span>Avg ${gp ? format1(avg) : ""}</span>
+    </div>
+  `;
+  return card;
+}
+
+function buildPhonePickCard(ownerId, index) {
+  const picks = state.picksByOwnerId?.[String(ownerId)] || [];
+  const p = picks[index];
+
+  const card = document.createElement("div");
+  card.className = "pCard";
+
+  if (!p) {
+    card.classList.add("empty");
+    card.innerHTML = `<div class="pTop"><div class="pName">—</div><div class="pProj"></div></div>`;
+    return card;
+  }
+
+  const fromName = p.fromOwnerId ? safeName(state.usersById[p.fromOwnerId]) : "";
+  card.innerHTML = `
+    <div class="pTop">
+      <div class="pName">${p.year} ${ordinal(p.round)}</div>
+      <div class="pProj"></div>
+    </div>
+    <div class="pMeta">
+      <span>${fromName ? `From ${fromName}` : ""}</span>
+    </div>
+  `;
+  return card;
+}
+
 
 /* =========================
    Render compare tables
 ========================= */
 function renderCompareTables() {
-  clearTable(leftTBody);
-  clearTable(rightTBody);
+  if (isPhoneMatchView()) {
+    // still clear table bodies so desktop doesn’t show stale data when resizing
+    clearTable(leftTBody);
+    clearTable(rightTBody);
+    renderMobileCompare();
+    return;
+  }
+  // ... keep your existing desktop/iPad table rendering below ...
 
-  const leftRoster = state.currentLeftOwnerId ? state.rosterByOwner[state.currentLeftOwnerId] : null;
+ const leftRoster = state.currentLeftOwnerId ? state.rosterByOwner[state.currentLeftOwnerId] : null;
   const rightRoster = state.currentRightOwnerId ? state.rosterByOwner[state.currentRightOwnerId] : null;
 
   if (!leftRoster || !rightRoster) {
