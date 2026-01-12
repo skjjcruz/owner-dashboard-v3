@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Owner Dashboard</title>
 
-  <link rel="stylesheet" href="style.css" />
+  <!-- cache-bust so iPhone/iPad don’t hold old CSS -->
+  <link rel="stylesheet" href="./style.css?v=1" />
 </head>
 
 <body>
@@ -34,7 +35,6 @@
   </header>
 
   <main class="layout">
-    <!-- Teams + Activity -->
     <section class="teamsPane">
       <div class="paneTitle">Teams</div>
       <ul id="teams" class="teamsList"></ul>
@@ -45,7 +45,6 @@
       </div>
     </section>
 
-    <!-- Left -->
     <section class="tablePane">
       <div id="leftTitle" class="tableTitle">Left Roster</div>
       <div class="tableScroll">
@@ -66,7 +65,6 @@
       </div>
     </section>
 
-    <!-- Right -->
     <section class="tablePane">
       <div id="rightTitle" class="tableTitle">Right Roster</div>
       <div class="tableScroll">
@@ -88,7 +86,7 @@
     </section>
   </main>
 
-  <!-- IMPORTANT: defer so DOM exists before JS runs -->
-  <script src="app.js" defer></script>
+  <!-- cache-bust JS too -->
+  <script src="./app.js?v=1" defer></script>
 </body>
 </html>
