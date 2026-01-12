@@ -1,1 +1,168 @@
+/* =========================================================
+   iPhone MATCH view (Sleeper-like) – div/cards, not tables
+   Paste at VERY BOTTOM of style.css
+========================================================= */
+@media (max-width: 520px){
 
+  /* top controls: single row, horizontal scroll */
+  .controls{
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    gap:10px !important;
+    overflow-x:auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  .controls label{ white-space:nowrap !important; }
+  .controls input, .controls select{ min-width: 150px !important; font-size:16px !important; }
+  #reloadBtn{ min-width:120px !important; font-size:16px !important; }
+
+  /* layout: Teams on top, then one full-width compare pane */
+  .layout{
+    display:flex !important;
+    flex-direction:column !important;
+    gap:12px !important;
+  }
+
+  /* hide BOTH table panes on phone (we’ll render our own compare feed) */
+  .tablePane{ display:none !important; }
+
+  /* phone compare pane */
+  .mobileComparePane{
+    background:#111827;
+    border:1px solid #1f2937;
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:
+      0 0 0 1px rgba(212,175,55,0.05),
+      0 10px 30px rgba(0,0,0,0.35);
+  }
+
+  .mobileCompareHeader{
+    padding:12px;
+    background:#0f172a;
+    border-bottom:1px solid #1f2937;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .mobileCompareHeader .title{
+    font-weight:900;
+    color:#d4af37;
+    font-size:14px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .mobileCompareHeader .sub{
+    color:#9ca3af;
+    font-size:12px;
+    white-space:nowrap;
+  }
+
+  .posBlock{
+    border-top:1px solid #1f2937;
+  }
+  .posBlockHeader{
+    padding:10px 12px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#0b1220;
+    color:#d4af37;
+    font-weight:900;
+    letter-spacing:.02em;
+  }
+  .posBlockHeader .count{
+    color:#9ca3af;
+    font-weight:800;
+  }
+
+  /* one matchup row = left card + right card */
+  .pairRow{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:10px;
+    padding:10px 12px;
+    border-top:1px solid #1f2937;
+    background:#111827;
+  }
+
+  .pCard{
+    border:1px solid #1f2937;
+    background:#0f172a;
+    border-radius:12px;
+    padding:10px;
+    min-width:0;
+    position:relative;
+  }
+
+  .pTop{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
+
+  .pName{
+    font-weight:900;
+    color:#e5e7eb;
+    font-size:14px;
+    line-height:1.1;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  .pProj{
+    font-weight:900;
+    color:#d4af37;
+    font-size:14px;
+    white-space:nowrap;
+  }
+
+  .pMeta{
+    margin-top:6px;
+    color:#9ca3af;
+    font-size:11px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 10px;
+  }
+  .pMeta span{ white-space:nowrap; }
+
+  .badgePos{
+    position:absolute;
+    top:10px;
+    left:10px;
+    transform: translateY(-36px);
+    background:#3b2f0b;
+    color:#fff;
+    font-weight:900;
+    font-size:11px;
+    border-radius:999px;
+    padding:4px 8px;
+    border:1px solid #1f2937;
+  }
+
+  /* status colors */
+  .pCard.psStarter{ background:#064e3b; border-color:#123b2a; }
+  .pCard.psIR{      background:#7f1d1d; border-color:#3f1d1d; }
+  .pCard.psTaxi{    background:#312e81; border-color:#2a2f6b; }
+  .pCard.psRookie{  background:#0c4a6e; border-color:#123b52; }
+  .pCard.psStarter .pName,
+  .pCard.psIR .pName,
+  .pCard.psTaxi .pName,
+  .pCard.psRookie .pName{ color:#fff; }
+  .pCard.psStarter .pMeta,
+  .pCard.psIR .pMeta,
+  .pCard.psTaxi .pMeta,
+  .pCard.psRookie .pMeta{ color: rgba(255,255,255,.85); }
+
+  /* empty side */
+  .pCard.empty{
+    background:transparent;
+    border:1px dashed #1f2937;
+  }
+  .pCard.empty .pName{ color:#6b7280; }
+}
