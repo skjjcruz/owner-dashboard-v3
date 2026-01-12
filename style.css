@@ -552,4 +552,144 @@ html, body{ overflow-x: hidden; }
     position: relative;
   }
   #leftTable td.yrs, #rightTable td.yrs{ margin-left: 0; }
+}/* =========================================================
+   OVERRIDES (v3) – Fix iPad empty middle + iPhone side-by-side
+   Paste at VERY BOTTOM of style.css
+========================================================= */
+
+/* ---------- iPad: remove the “black middle hole” ---------- */
+/* Most iPads sit around 1024px wide, so keep 3 columns but
+   force the panes to stretch and scroll internally. */
+@media (min-width: 980px){
+
+  /* Ensure the grid exists and columns behave */
+  .layout{
+    display: grid !important;
+    grid-template-columns: var(--teams-w, 320px) minmax(0,1fr) minmax(0,1fr) !important;
+    gap: 14px !important;
+    align-items: stretch !important;
+  }
+
+  /* Make panes fill available height and keep their own scroll */
+  .teamsPane,
+  .tablePane{
+    height: calc(100vh - 92px) !important; /* adjust if topbar height changes */
+    min-height: 0 !important;
+  }
+
+  .teamsList,
+  .tableScroll,
+  .activityList{
+    min-height: 0 !important;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* If your iPad is triggering the 980px “stack to one column” rule,
+   this prevents it from stacking and creating weird empty space. */
+@media (min-width: 900px) and (max-width: 980px){
+  .layout{
+    display: grid !important;
+    grid-template-columns: var(--teams-w, 320px) minmax(0,1fr) minmax(0,1fr) !important;
+  }
+}
+
+/* ---------- iPhone: controls in ONE row (horizontal scroll) ---------- */
+@media (max-width: 520px){
+
+  /* Keep the topbar compact and single-line */
+  .topbar{
+    padding: 10px 10px !important;
+  }
+
+  .controls{
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    gap: 10px !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+
+  .controls label{
+    flex: 0 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    white-space: nowrap !important;
+    font-size: 12px !important;
+  }
+
+  .controls input,
+  .controls select{
+    width: 160px !important;
+    min-width: 160px !important;
+    font-size: 16px !important; /* prevent zoom */
+    padding: 10px 12px !important;
+  }
+
+  #reloadBtn{
+    flex: 0 0 auto !important;
+    min-width: 120px !important;
+    font-size: 16px !important;
+    padding: 10px 14px !important;
+  }
+
+  /* ---------- iPhone layout: Teams full width, then Left/Right side-by-side ---------- */
+  .layout{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    padding: 10px !important;
+  }
+
+  /* Teams pane spans both columns */
+  .teamsPane{
+    grid-column: 1 / -1 !important;
+  }
+
+  /* Left/Right panes side-by-side */
+  .tablePane{
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* Tighten titles */
+  .paneTitle,
+  .tableTitle{
+    padding: 10px 10px !important;
+    font-size: 13px !important;
+  }
+
+  /* Make card rows denser */
+  #leftTable tbody tr:not(.groupRow):not(.sepRow):not(.emptyRow),
+  #rightTable tbody tr:not(.groupRow):not(.sepRow):not(.emptyRow){
+    grid-template-columns: 44px 1fr 46px !important; /* slightly narrower */
+    padding: 8px 8px !important;
+  }
+
+  /* Reduce big name size a hair so it fits in 50% column */
+  #leftTable td.player,
+  #rightTable td.player{
+    font-size: 14px !important;
+  }
+
+  /* Reduce PROJ size */
+  #leftTable td.nfl,
+  #rightTable td.nfl{
+    font-size: 13px !important;
+  }
+}
+
+/* ---------- Small phones (extra narrow): keep compare usable ---------- */
+@media (max-width: 390px){
+  .controls input, .controls select{ width: 150px !important; min-width: 150px !important; }
+
+  #leftTable tbody tr:not(.groupRow):not(.sepRow):not(.emptyRow),
+  #rightTable tbody tr:not(.groupRow):not(.sepRow):not(.emptyRow){
+    grid-template-columns: 42px 1fr 42px !important;
+  }
+
+  #leftTable td.player, #rightTable td.player{ font-size: 13px !important; }
 }
