@@ -1343,8 +1343,4 @@ window.addEventListener("resize", () => {
 });
 
 // Boot
-initUsernameLockUI();
-fullReload();
-window.addEventListener("resize", () => {
-  renderCompareTables();
-});
+
