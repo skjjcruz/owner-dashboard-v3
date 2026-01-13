@@ -370,9 +370,22 @@ td.pos{
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  -webkit-overflow-scrolling: auto;  /* IMPORTANT: no momentum here */
+  -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
   transform: translateZ(0);
+}/* HARD lock vertical scroll only (stop horizontal drift) */
+.teamsList,
+.activityList{
+  overflow-x: hidden !important;
+  overscroll-behavior-x: none;
+  touch-action: pan-y;
+}
+
+/* Clamp any child overflow that could cause sideways movement */
+.teamsList li,
+.activityItem{
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* =========================================================
