@@ -1165,4 +1165,8 @@ window.addEventListener("resize", () => {
 
 // Boot
 initUsernameLockUI();
-fullReload();
+
+// Only auto-load if we already have a locked username
+if (localStorage.getItem(LS_LOCKED_USERNAME)) {
+  fullReload();
+}
