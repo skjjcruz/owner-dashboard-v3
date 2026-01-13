@@ -332,10 +332,9 @@ td.pos{
 
 /* Use a real height so panes don't collapse/reflow into "non-scroll" */
 .layout{
-  height: calc(100dvh - 92px);
   min-height: 0;
+  height: calc(100dvh - 92px);
 }
-
 /* keep grid children allowed to shrink */
 .teamsPane,
 .tablePane{
@@ -372,8 +371,9 @@ td.pos{
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
-  transform: translateZ(0);
-}/* HARD lock vertical scroll only (stop horizontal drift) */
+  transform: translateZ(0);   
+}
+/* HARD lock vertical scroll only (stop horizontal drift) */
 .teamsList,
 .activityList{
   overflow-x: hidden !important;
