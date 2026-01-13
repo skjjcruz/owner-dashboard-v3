@@ -325,13 +325,26 @@ td.pos{
   background: var(--rookie);
   color: #e0f2fe;
 }
+/* =========================================
+   FIX: Split Teams + Activity into two scroll panes
+   (Desktop + iPad)
+========================================= */
+.teamsList{
+  flex: 1 1 0;
+}
 
+.activityPane{
+  flex: 1 1 0;
+}
+
+.activityList{
+  flex: 1 1 0;
+}
 /* =========================================================
    PHONE: single-row controls + side-by-side rosters
 ========================================================= */
 @media (max-width: 520px){
-
-  /* Controls: ONE row, scroll sideways */
+ /* Controls: ONE row, scroll sideways */
   .controls{
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
