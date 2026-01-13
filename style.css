@@ -1,5 +1,10 @@
 /* =========================================
    Owner Dashboard – CLEAN STABLE CSS (v4)
+   Goals:
+   - Desktop/iPad: 3-column grid (Teams | Left | Right)
+   - iPhone: Teams full width, then Left+Right side-by-side
+   - iPhone controls: single row (horizontal scroll)
+   - No table-to-card conversion (too unstable)
 ========================================= */
 
 :root{
@@ -90,8 +95,10 @@ body{
   display: grid;
   grid-template-columns: var(--teams-w) minmax(0, 1fr) minmax(0, 1fr);
   gap: 14px;
+
+  /* Key: stop “mystery middle gap” from height collapse */
   align-items: stretch;
-  min-height: calc(100vh - 92px);
+  min-height: calc(100vh - 92px); /* ok if a little off; just needs to be >0 */
 }
 
 /* ===== Cards ===== */
@@ -324,6 +331,7 @@ td.pos{
 ========================================================= */
 @media (max-width: 520px){
 
+  /* Controls: ONE row, scroll sideways */
   .controls{
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
@@ -340,7 +348,7 @@ td.pos{
   .controls select{
     min-width: 160px !important;
     width: 160px !important;
-    font-size: 16px !important;
+    font-size: 16px !important; /* prevents iOS zoom */
     padding: 10px 12px !important;
     height: auto !important;
   }
@@ -352,6 +360,7 @@ td.pos{
     padding: 10px 14px !important;
   }
 
+  /* Layout: Teams spans full width; rosters side-by-side */
   .layout{
     grid-template-columns: 1fr 1fr !important;
     gap: 10px !important;
@@ -363,15 +372,18 @@ td.pos{
     grid-column: 1 / -1 !important;
   }
 
+  /* tighter titles */
   .paneTitle,
   .tableTitle{
     padding: 10px 10px !important;
     font-size: 13px !important;
   }
 
+  /* tighten table a bit */
   thead th{ padding: 8px; font-size: 11px; }
   tbody td{ padding: 8px; font-size: 12px; }
 
+  /* hide least important columns on phone */
   th.avg, td.avg{ display: none; }
   th.yrs, td.yrs{ display: none; }
 
@@ -381,7 +393,12 @@ td.pos{
   th.nfl, td.nfl{ width: 56px; }
 }
 
+/* Super narrow phones: stack rosters to avoid unreadable squish */
 @media (max-width: 390px){
-  .layout{ grid-template-columns: 1fr !important; }
-  .teamsPane{ grid-column: 1 / -1 !important; }
+  .layout{
+    grid-template-columns: 1fr !important;
+  }
+  .teamsPane{
+    grid-column: 1 / -1 !important;
+  }
 }
