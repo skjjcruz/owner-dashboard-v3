@@ -373,13 +373,6 @@ td.pos{
   touch-action: pan-y;
   transform: translateZ(0);   
 }
-/* HARD lock vertical scroll only (stop horizontal drift) */
-.teamsList,
-.activityList{
-  overflow-x: hidden !important;
-  overscroll-behavior-x: none;
-  touch-action: pan-y;
-}
 
 /* Clamp any child overflow that could cause sideways movement */
 .teamsList li,
