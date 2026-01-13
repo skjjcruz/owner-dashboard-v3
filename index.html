@@ -73,6 +73,14 @@
       </div>
     </section>
   </div>
-<script src="script.js" defer></script>
+  <script>
+  window.__jsLoaded = false;
+</script>
+
+<script src="./script.js?v=7"
+        defer
+        onload="window.__jsLoaded=true; document.getElementById('status').textContent='JS loaded ✅';"
+        onerror="document.getElementById('status').textContent='JS failed to load ❌ (script.js not found / blocked / cached)';">
+</script>
 </body>
 </html>
