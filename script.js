@@ -46,7 +46,7 @@ const elReloadBtn = document.getElementById("reloadBtn");
 const elActivityList = document.getElementById("activityList");
 
 // ===== LocalStorage keys =====
-const LS_LOCKED_USERNAME = "od_locked_username";
+const LS_LOCKED_USERNAME = "od_locked_username_v2";
 
 // ===== State =====
 let state = {
@@ -123,6 +123,15 @@ function fillSelect(el, years, defaultVal) {
 /* =========================
    Username lock
 ========================= */
+function lockUsername(username) {
+  if (!username) return;
+  localStorage.setItem(LS_LOCKED_USERNAME, username);
+  if (elUsername) {
+    elUsername.value = username;
+    elUsername.disabled = true;
+  }
+}
+
 function initUsernameLockUI() {
   const locked = localStorage.getItem(LS_LOCKED_USERNAME);
 
@@ -172,6 +181,7 @@ async function loadNFLState() {
    Recent Activity (Transactions)
    Sleeper endpoint uses "round" (week number)
 ========================= */
+
 async function loadLeagueActivity() {
   if (!state.leagueId || !elActivityList) return;
 
@@ -1126,7 +1136,6 @@ async function loadLeagueData() {
 
   setStatus(`Ready ✅ (Tap L / R on a team) — League ${state.season}, Stats ${state.statsSeason}, Week ${state.week || 1}`);
 }
-
 /* =========================
    Boot / reload wiring
 ========================= */
@@ -1153,20 +1162,12 @@ if (elLeagueSelect) {
   });
 }
 
-// Re-render on rotation / resize (so phone mode toggles cleanly)
-let _resizeTimer = null;
-window.addEventListener("resize", () => {
-  if (_resizeTimer) return;
-  _resizeTimer = setTimeout(() => {
-    _resizeTimer = null;
-    renderCompareTables();
-  }, 150);
-});
-
 // Boot
 initUsernameLockUI();
 
-// Only auto-load if we already have a locked username
 if (localStorage.getItem(LS_LOCKED_USERNAME)) {
   fullReload();
+} else {
+  setStatus("Enter a Sleeper username, then tap Reload.");
 }
+
