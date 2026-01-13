@@ -448,7 +448,7 @@ td.pos{
 }
 
 /* Super narrow phones: stack rosters to avoid unreadable squish */
-@media (max-width: 390px){
+@media (max-width: 340px){
   .layout{
     grid-template-columns: 1fr !important;
   }
