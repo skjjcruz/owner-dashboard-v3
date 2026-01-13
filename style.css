@@ -329,17 +329,10 @@ td.pos{
    FIX: Split Teams + Activity into two scroll panes
    (Desktop + iPad)
 ========================================= */
-.teamsList{
-  flex: 1 1 0;
-}
+.teamsList { flex: 1 1 0; min-height: 0; }
+.activityPane { flex: 1 1 0; min-height: 0; }
+.activityList { flex: 1 1 0; min-height: 0; }
 
-.activityPane{
-  flex: 1 1 0;
-}
-
-.activityList{
-  flex: 1 1 0;
-}
 /* =========================================================
    PHONE: single-row controls + side-by-side rosters
 ========================================================= */
