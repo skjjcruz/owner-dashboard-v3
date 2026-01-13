@@ -126,31 +126,31 @@ function fillSelect(el, years, defaultVal) {
 function initUsernameLockUI() {
   const locked = localStorage.getItem(LS_LOCKED_USERNAME);
 
+  // Fill dropdowns first
+  fillSelect(elSeason, LEAGUE_SEASON_YEARS, DEFAULT_LEAGUE_SEASON);
+  fillSelect(elStatsSeason, STATS_SEASON_YEARS, DEFAULT_STATS_SEASON);
+
+  state.season = elSeason?.value || DEFAULT_LEAGUE_SEASON;
+  state.statsSeason = elStatsSeason?.value || DEFAULT_STATS_SEASON;
+
   if (locked) {
+    // Already locked from a previous successful load
     state.username = locked;
     if (elUsername) {
       elUsername.value = locked;
       elUsername.disabled = true;
     }
   } else {
+    // First-time: allow manual entry (DON'T force it to "")
+    state.username = "";
     if (elUsername) {
-      elUsername.value = DEFAULT_USERNAME;
       elUsername.disabled = false;
+
+      // If it’s blank, keep it blank so user can type
+      // (Optional) If you want it prefilled the first time, uncomment next line:
+      // elUsername.value = elUsername.value || "skjjcruz";
     }
-  }
-
-  fillSelect(elSeason, LEAGUE_SEASON_YEARS, DEFAULT_LEAGUE_SEASON);
-  fillSelect(elStatsSeason, STATS_SEASON_YEARS, DEFAULT_STATS_SEASON);
-
-  state.season = elSeason?.value || DEFAULT_LEAGUE_SEASON;
-  state.statsSeason = elStatsSeason?.value || DEFAULT_STATS_SEASON;
-}
-
-function lockUsername(username) {
-  localStorage.setItem(LS_LOCKED_USERNAME, username);
-  if (elUsername) {
-    elUsername.value = username;
-    elUsername.disabled = true;
+    setStatus("Enter a Sleeper username, then tap Reload.");
   }
 }
 
