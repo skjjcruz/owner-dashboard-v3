@@ -2,39 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Owner Dashboard</title>
 
-  <!-- cache-bust so iPhone/iPad don’t hold old CSS -->
-  <link rel="stylesheet" href="./style.css?v=1" />
+  <link rel="stylesheet" href="./style.css" />
 </head>
-
 <body>
-  <header class="topbar">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
     <div class="controls">
-      <label>Username:
-        <input id="usernameInput" type="text" placeholder="skjjcruz" />
-      </label>
-
-      <label>League Season:
-        <select id="seasonInput"></select>
-      </label>
-
-      <label>Stats Season:
-        <select id="statsSeasonInput"></select>
-      </label>
-
-      <label>League:
-        <select id="leagueSelect"></select>
-      </label>
-
+      <label>Username: <input id="usernameInput" placeholder="skjjcruz" /></label>
+      <label>League Season: <select id="seasonInput"></select></label>
+      <label>Stats Season: <select id="statsSeasonInput"></select></label>
+      <label>League: <select id="leagueSelect"></select></label>
       <button id="reloadBtn">Reload</button>
     </div>
-
     <div id="status" class="status"></div>
-  </header>
+  </div>
 
-  <main class="layout">
+  <!-- MAIN -->
+  <div class="layout">
     <section class="teamsPane">
       <div class="paneTitle">Teams</div>
       <ul id="teams" class="teamsList"></ul>
@@ -84,9 +72,8 @@
         </table>
       </div>
     </section>
-  </main>
+  </div>
 
-  <!-- cache-bust JS too -->
-  <script src="app.js?v=12" defer></script>
+  <script src="./app.js" defer></script>
 </body>
 </html>
