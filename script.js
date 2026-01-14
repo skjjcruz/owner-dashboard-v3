@@ -157,7 +157,7 @@ function initUsernameLockUI() {
 
       // If it’s blank, keep it blank so user can type
       // (Optional) If you want it prefilled the first time, uncomment next line:
-      // elUsername.value = elUsername.value || "skjjcruz";
+      
     }
     setStatus("Enter a Sleeper username, then tap Reload.");
   }
