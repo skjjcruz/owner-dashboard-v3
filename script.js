@@ -124,6 +124,7 @@ function fillSelect(el, years, defaultVal) {
    - First visit: blank + editable
    - After first successful load: stored + auto-filled + locked
 ========================= */
+
 function lockUsername(username) {
   const u = (username || "").trim();
   if (!u) return;
@@ -1165,6 +1166,7 @@ if (localStorage.getItem(LS_LOCKED_USERNAME)) {
 } else {
   setStatus("Enter a Sleeper username, then tap Reload.");
 }
+
 
 
 
