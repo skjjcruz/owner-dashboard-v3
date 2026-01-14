@@ -127,8 +127,8 @@ function lockUsername(username) {
   if (!username) return;
   localStorage.setItem(LS_LOCKED_USERNAME, username);
   if (elUsername) {
-    elUsername.value = username;
-    elUsername.disabled = true;
+    elUsername.value = locked;
+    elUsername.disabled = false; // keep editable
   }
 }
 
@@ -143,18 +143,18 @@ function initUsernameLockUI() {
   state.statsSeason = elStatsSeason?.value || DEFAULT_STATS_SEASON;
 
   if (locked) {
-    // Already locked from a previous successful load
-    state.username = locked;
-    if (elUsername) {
-      elUsername.value = locked;
-      elUsername.disabled = true;
-    }
+  state.username = locked;
+  if (elUsername) {
+    elUsername.value = locked;
+    elUsername.disabled = false; // allow editing
+  }
+ }   
   } else {
     // First-time: allow manual entry (DON'T force it to "")
     state.username = "";
     if (elUsername) {
       elUsername.disabled = false;
-
+      elUsername.value = "";
       // If it’s blank, keep it blank so user can type
       // (Optional) If you want it prefilled the first time, uncomment next line:
       
