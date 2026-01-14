@@ -133,7 +133,11 @@ function lockUsername(username) {
 }
 
 function initUsernameLockUI() {
-  const locked = localStorage.getItem(LS_LOCKED_USERNAME);
+  const locked = (localStorage.getItem(LS_LOCKED_USERNAME) || "").trim();
+  const typed  = (elUsername?.value || "").trim();
+
+// Always trust what the user typed; fall back to stored value
+state.username = typed || locked;
 
   // Fill dropdowns first
   fillSelect(elSeason, LEAGUE_SEASON_YEARS, DEFAULT_LEAGUE_SEASON);
