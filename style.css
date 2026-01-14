@@ -380,7 +380,52 @@ td.pos{
   max-width: 100%;
   overflow-x: hidden;
 }
+/* =========================================================
+   HARD LOCK: vertical scroll only (kills sideways drift)
+========================================================= */
 
+html, body{
+  overflow-x: hidden !important;
+  max-width: 100%;
+  overscroll-behavior-x: none;
+  touch-action: pan-y;
+}
+
+.layout{
+  overflow-x: hidden !important;
+  max-width: 100%;
+}
+
+/* Vertical-only scroll panes */
+.teamsList,
+.activityList,
+.tableScroll{
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: none;
+  touch-action: pan-y;
+}
+
+/* Prevent children from forcing width */
+.teamsList li,
+.activityItem{
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Tables are common horizontal offenders */
+table{
+  width: 100%;
+  max-width: 100%;
+  table-layout: fixed;
+}
+
+th.player, td.player{
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 /* =========================================================
    PHONE: single-row controls + side-by-side rosters
 ========================================================= */
