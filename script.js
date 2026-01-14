@@ -120,13 +120,16 @@ function fillSelect(el, years, defaultVal) {
   el.value = defaultVal;
 }
 /* =========================
-   Username lock
+   Username lock (Option A)
+   - First visit: blank + editable
+   - After first successful load: stored + auto-filled + locked
 ========================= */
 function lockUsername(username) {
-  if (!username) return;
-  localStorage.setItem(LS_LOCKED_USERNAME, username);
+  const u = (username || "").trim();
+  if (!u) return;
+  localStorage.setItem(LS_LOCKED_USERNAME, u);
   if (elUsername) {
-    elUsername.value = username;
+    elUsername.value = u;
     elUsername.disabled = true; // lock after first successful load
   }
 }
@@ -134,7 +137,7 @@ function lockUsername(username) {
 function initUsernameLockUI() {
   const locked = (localStorage.getItem(LS_LOCKED_USERNAME) || "").trim();
 
-  // Fill dropdowns first
+  // Fill dropdowns
   fillSelect(elSeason, LEAGUE_SEASON_YEARS, DEFAULT_LEAGUE_SEASON);
   fillSelect(elStatsSeason, STATS_SEASON_YEARS, DEFAULT_STATS_SEASON);
 
@@ -142,14 +145,12 @@ function initUsernameLockUI() {
   state.statsSeason = elStatsSeason?.value || DEFAULT_STATS_SEASON;
 
   if (locked) {
-    // Returning user: show stored username + lock field
     state.username = locked;
     if (elUsername) {
       elUsername.value = locked;
       elUsername.disabled = true;
     }
   } else {
-    // First-time user: blank + editable
     state.username = "";
     if (elUsername) {
       elUsername.value = "";
