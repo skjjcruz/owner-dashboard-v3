@@ -119,7 +119,6 @@ function fillSelect(el, years, defaultVal) {
   }
   el.value = defaultVal;
 }
-
 /* =========================
    Username lock
 ========================= */
@@ -127,17 +126,13 @@ function lockUsername(username) {
   if (!username) return;
   localStorage.setItem(LS_LOCKED_USERNAME, username);
   if (elUsername) {
-    elUsername.value = locked;
-    elUsername.disabled = false; // keep editable
+    elUsername.value = username;
+    elUsername.disabled = true; // lock after first successful load
   }
 }
 
 function initUsernameLockUI() {
   const locked = (localStorage.getItem(LS_LOCKED_USERNAME) || "").trim();
-  const typed  = (elUsername?.value || "").trim();
-
-// Always trust what the user typed; fall back to stored value
-state.username = typed || locked;
 
   // Fill dropdowns first
   fillSelect(elSeason, LEAGUE_SEASON_YEARS, DEFAULT_LEAGUE_SEASON);
@@ -147,26 +142,22 @@ state.username = typed || locked;
   state.statsSeason = elStatsSeason?.value || DEFAULT_STATS_SEASON;
 
   if (locked) {
-  state.username = locked;
-  if (elUsername) {
-    elUsername.value = locked;
-    elUsername.disabled = false; // allow editing
-  }
- }   
+    // Returning user: show stored username + lock field
+    state.username = locked;
+    if (elUsername) {
+      elUsername.value = locked;
+      elUsername.disabled = true;
+    }
   } else {
-    // First-time: allow manual entry (DON'T force it to "")
+    // First-time user: blank + editable
     state.username = "";
     if (elUsername) {
-      elUsername.disabled = false;
       elUsername.value = "";
-      // If it’s blank, keep it blank so user can type
-      // (Optional) If you want it prefilled the first time, uncomment next line:
-      
+      elUsername.disabled = false;
     }
     setStatus("Enter a Sleeper username, then tap Reload.");
   }
 }
-
 /* =========================
    NFL State (week)
 ========================= */
@@ -1168,6 +1159,12 @@ if (elLeagueSelect) {
 
 // Boot
 initUsernameLockUI();
-setStatus("Enter a Sleeper username, then tap Reload.");
+
+if (localStorage.getItem(LS_LOCKED_USERNAME)) {
+  fullReload();
+} else {
+  setStatus("Enter a Sleeper username, then tap Reload.");
 }
+
+
 
