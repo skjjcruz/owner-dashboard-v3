@@ -490,8 +490,26 @@ th.player, td.player{
   th.pts, td.pts{ width: 70px; }
   th.gp,  td.gp{  width: 46px; }
   th.nfl, td.nfl{ width: 56px; }
+   
+/* PHONE FIX: keep Player column visible */
+table{
+  table-layout: auto !important;
 }
 
+th.player,
+td.player{
+  width: 55% !important;
+  min-width: 140px !important;
+}
+
+/* ensure player name text can actually render */
+td.player a{
+  display: inline-block !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
 /* Super narrow phones: stack rosters to avoid unreadable squish */
 @media (max-width: 340px){
   .layout{
