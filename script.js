@@ -1157,7 +1157,6 @@ if (elLeagueSelect) {
     }
   });
 }
-
 // Boot
 initUsernameLockUI();
 
@@ -1165,6 +1164,8 @@ if (localStorage.getItem(LS_LOCKED_USERNAME)) {
   fullReload();
 } else {
   setStatus("Enter a Sleeper username, then tap Reload.");
+}
+
 
 
 
