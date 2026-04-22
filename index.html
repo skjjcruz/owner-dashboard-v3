@@ -37,67 +37,33 @@
 
     html, body {
       height: 100%;
-      background: var(--navy-deep);
+      background: #050505;
       color: var(--white);
       font-family: 'Oswald', sans-serif;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Starfield backdrop ─────────────────────────────────── */
+    /* ── Subdued backdrop ───────────────────────────────────── */
     .backdrop {
       position: fixed;
       inset: 0;
       z-index: 0;
       background:
-        radial-gradient(ellipse at 50% 30%, rgba(242, 193, 78, 0.14) 0%, transparent 55%),
-        radial-gradient(ellipse at 50% 70%, rgba(20, 27, 69, 0.9) 0%, transparent 70%),
-        linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+        radial-gradient(ellipse at 50% 20%, rgba(242,193,78,0.05) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 100%, rgba(0,0,0,0.85) 0%, transparent 70%),
+        #050505;
     }
-    .stars, .stars-2, .stars-3 {
+    .watermark {
       position: fixed;
       inset: 0;
       z-index: 1;
       pointer-events: none;
-      background-repeat: repeat;
-    }
-    .stars {
-      background-image:
-        radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.9), transparent),
-        radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.8), transparent),
-        radial-gradient(1.5px 1.5px at 40% 70%, rgba(255,255,255,0.9), transparent),
-        radial-gradient(1px 1px at 65% 55%, rgba(255,255,255,0.7), transparent),
-        radial-gradient(1px 1px at 10% 85%, rgba(255,255,255,0.85), transparent),
-        radial-gradient(1.5px 1.5px at 90% 80%, rgba(255,255,255,0.9), transparent),
-        radial-gradient(1px 1px at 55% 20%, rgba(255,255,255,0.7), transparent);
-      background-size: 100% 100%;
-      animation: drift 120s linear infinite;
-    }
-    .stars-2 {
-      background-image:
-        radial-gradient(1px 1px at 15% 55%, rgba(242,193,78,0.55), transparent),
-        radial-gradient(1px 1px at 75% 35%, rgba(255,255,255,0.5), transparent),
-        radial-gradient(1px 1px at 30% 15%, rgba(255,255,255,0.4), transparent),
-        radial-gradient(1px 1px at 85% 65%, rgba(242,193,78,0.45), transparent);
-      background-size: 100% 100%;
-      opacity: 0.7;
-      animation: drift 200s linear infinite reverse;
-    }
-    .stars-3 {
-      background-image:
-        radial-gradient(2px 2px at 25% 40%, rgba(255,255,255,0.95), transparent 60%),
-        radial-gradient(2px 2px at 70% 80%, rgba(242,193,78,0.8), transparent 60%),
-        radial-gradient(2px 2px at 50% 10%, rgba(255,255,255,0.9), transparent 60%);
-      background-size: 100% 100%;
-      animation: twinkle 4s ease-in-out infinite alternate;
-    }
-    @keyframes drift {
-      from { transform: translateY(0); }
-      to   { transform: translateY(-200px); }
-    }
-    @keyframes twinkle {
-      from { opacity: 0.3; }
-      to   { opacity: 0.9; }
+      background-image: url('icons/dhq-logo.png');
+      background-repeat: no-repeat;
+      background-position: center 62%;
+      background-size: min(70vw, 780px) auto;
+      opacity: 0.05;
     }
 
     /* ── Main layout ────────────────────────────────────────── */
@@ -273,16 +239,14 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .stars, .stars-2, .stars-3, .logo-wrap::before { animation: none; }
+      .logo-wrap::before { animation: none; }
       .brand, .status, .tagline, .cta-row, .divider, .logo-wrap { animation: none; }
     }
   </style>
 </head>
 <body>
   <div class="backdrop"></div>
-  <div class="stars"></div>
-  <div class="stars-2"></div>
-  <div class="stars-3"></div>
+  <div class="watermark" aria-hidden="true"></div>
 
   <main class="page">
     <div class="logo-wrap">
